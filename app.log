@@ -1,0 +1,42 @@
+2025-08-28 12:33:04,634 - ERROR - Erreur lors du chargement des types de procédés
+Traceback (most recent call last):
+  File "d:\IA Water Data Analysis\generateur_STEP\gen_station.py", line 56, in get_types
+    value['display_name'] = formater_nom_procede(key)
+                            ^^^^^^^^^^^^^^^^^^^^
+NameError: name 'formater_nom_procede' is not defined
+2025-08-28 12:33:04,642 - ERROR - Impossible de charger les types de procédés. Vérifiez le fichier types.json
+2025-08-28 12:35:59,230 - INFO - Chargé 11 types de procédés
+2025-08-28 12:36:11,301 - INFO - Créé un état initial pour 10 ouvrages
+2025-08-28 12:36:11,301 - INFO - Chargé 10 ouvrages pour le procédé 'boues_activées'
+2025-08-28 12:36:16,759 - WARNING - Liste d'ouvrages invalide, utilisation d'une liste vide
+2025-08-28 12:36:16,787 - INFO - Station 'Chettia' créée avec succès!
+2025-08-28 12:36:16,788 - INFO - ID de la station: 5a84eb5c-05fe-47d3-b9dd-b72445b040dc
+2025-08-28 15:46:41,662 - INFO - Chargé 11 types de procédés
+2025-08-28 15:46:49,415 - INFO - Chargé 9 ouvrages pour le procédé 'filtres_plantes_roseaux'
+2025-08-28 15:46:52,585 - ERROR - Le paramètre 'ouvrages' doit être une liste
+2025-08-28 15:46:52,588 - INFO - Station 'pop' créée avec succès!
+2025-08-28 15:46:52,588 - INFO - ID de la station: b68dea1a-bd99-4547-b063-142f9cf6a246
+2025-08-28 15:47:27,672 - INFO - Chargé 11 types de procédés
+2025-08-28 15:58:25,896 - INFO - Chargé 11 types de procédés
+2025-08-28 16:00:28,683 - INFO - Chargé 11 types de procédés
+2025-08-30 16:24:57,923 - INFO - Chargé 11 types de procédés
+2025-08-30 16:25:06,635 - INFO - Chargé 9 ouvrages pour le procédé 'lagunage_aéré'
+2025-08-30 16:25:09,971 - ERROR - Le paramètre 'ouvrages' doit être une liste
+2025-08-30 16:25:09,977 - INFO - Station 'Essai' créée avec succès!
+2025-08-30 16:25:09,977 - INFO - ID de la station: bee2f514-dcfc-4d9a-bd8e-e223be374629
+2025-08-31 11:06:13,008 - WARNING - Erreur lors de la lecture de etat_station.json: Expecting value: line 2 column 1 (char 1)
+2025-08-31 11:51:27,031 - INFO - Chargé 11 types de procédés
+2025-08-31 11:52:46,937 - INFO - Chargé 11 types de procédés
+2025-08-31 11:52:46,938 - INFO - Chargé 10 ouvrages pour le procédé 'boues_activées'
+2025-08-31 11:53:29,502 - INFO - Chargé 11 types de procédés
+2025-08-31 11:53:29,502 - INFO - Chargé 10 ouvrages pour le procédé 'boues_activées'
+2025-08-31 11:54:33,929 - INFO - Chargé 11 types de procédés
+2025-08-31 11:54:33,929 - INFO - Chargé 10 ouvrages pour le procédé 'boues_activées'
+2025-08-31 11:55:15,236 - INFO - Chargé 11 types de procédés
+2025-08-31 11:55:15,237 - INFO - Chargé 10 ouvrages pour le procédé 'boues_activées'
+2025-08-31 13:08:28,804 - ERROR - Aucun équipement trouvé pour cette mise à jour.
+2025-08-31 13:08:52,543 - ERROR - Aucun équipement trouvé pour cette mise à jour.
+2025-08-31 13:13:47,729 - ERROR - Aucun équipement trouvé pour cette mise à jour.
+2025-08-31 13:21:47,789 - ERROR - Aucun équipement trouvé pour cette mise à jour.
+2025-08-31 13:22:01,139 - ERROR - Aucun équipement trouvé pour cette mise à jour.
+2025-08-31 13:22:18,461 - ERROR - Aucun équipement trouvé pour cette mise à jour.

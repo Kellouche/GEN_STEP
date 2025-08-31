@@ -1,0 +1,388 @@
+2025-08-31 08:57:57,936 - INFO - Vérification des états des ouvrages...
+2025-08-31 08:57:57,938 - INFO - Préparation du diagramme...
+2025-08-31 08:57:57,938 - INFO - Génération du diagramme en cours...
+2025-08-31 09:10:09,053 - INFO - Vérification des états des ouvrages...
+2025-08-31 09:10:09,157 - INFO - Préparation du diagramme...
+2025-08-31 09:10:09,158 - INFO - Génération du diagramme en cours...
+2025-08-31 09:10:17,255 - ERROR - Erreur lors de la génération du diagramme: 'DiagrammeFlux' object has no attribute '_formater_nom_ouvrage'
+Traceback (most recent call last):
+  File "d:\IA Water Data Analysis\generateur_STEP\diagramme_flux.py", line 983, in generer_diagramme_station
+    diagramme.generer_diagramme(liste_ouvrages, station.get('nom', 'Station inconnue'))
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\IA Water Data Analysis\generateur_STEP\diagramme_flux.py", line 849, in generer_diagramme
+    fig, ax = self.dessiner_diagramme(ouvrages_positionnes, titre)
+              ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\IA Water Data Analysis\generateur_STEP\diagramme_flux.py", line 648, in dessiner_diagramme
+    nom_formate = self._formater_nom_ouvrage(ouvrage['nom'])
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DiagrammeFlux' object has no attribute '_formater_nom_ouvrage'
+2025-08-31 09:11:06,197 - INFO - Vérification des états des ouvrages...
+2025-08-31 09:11:06,197 - INFO - Préparation du diagramme...
+2025-08-31 09:11:06,198 - INFO - Génération du diagramme en cours...
+2025-08-31 09:11:06,491 - ERROR - Erreur lors de la génération du diagramme: 'DiagrammeFlux' object has no attribute '_formater_nom_ouvrage'
+Traceback (most recent call last):
+  File "d:\IA Water Data Analysis\generateur_STEP\diagramme_flux.py", line 983, in generer_diagramme_station
+    diagramme.generer_diagramme(liste_ouvrages, station.get('nom', 'Station inconnue'))
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\IA Water Data Analysis\generateur_STEP\diagramme_flux.py", line 849, in generer_diagramme
+    fig, ax = self.dessiner_diagramme(ouvrages_positionnes, titre)
+              ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\IA Water Data Analysis\generateur_STEP\diagramme_flux.py", line 648, in dessiner_diagramme
+    nom_formate = self._formater_nom_ouvrage(ouvrage['nom'])
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DiagrammeFlux' object has no attribute '_formater_nom_ouvrage'
+2025-08-31 09:12:04,558 - INFO - Vérification des états des ouvrages...
+2025-08-31 09:12:04,559 - INFO - Préparation du diagramme...
+2025-08-31 09:12:04,559 - INFO - Génération du diagramme en cours...
+2025-08-31 09:12:04,907 - ERROR - Erreur lors de la génération du diagramme: 'list' object has no attribute 'items'
+Traceback (most recent call last):
+  File "d:\IA Water Data Analysis\generateur_STEP\diagramme_flux.py", line 1018, in generer_diagramme_station
+    diagramme.generer_diagramme(liste_ouvrages, station.get('nom', 'Station inconnue'))
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\IA Water Data Analysis\generateur_STEP\diagramme_flux.py", line 884, in generer_diagramme
+    fig, ax = self.dessiner_diagramme(ouvrages_positionnes, titre)
+              ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\IA Water Data Analysis\generateur_STEP\diagramme_flux.py", line 702, in dessiner_diagramme
+    self._dessiner_fleches(ax, ouvrages_positionnes)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\IA Water Data Analysis\generateur_STEP\diagramme_flux.py", line 297, in _dessiner_fleches
+    for filiere, ouvrages in ouvrages_par_filiere.items():
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'items'
+2025-08-31 09:13:58,893 - INFO - Vérification des états des ouvrages...
+2025-08-31 09:13:58,894 - INFO - Préparation du diagramme...
+2025-08-31 09:13:58,894 - INFO - Génération du diagramme en cours...
+2025-08-31 09:15:53,208 - INFO - Vérification des états des ouvrages...
+2025-08-31 09:15:53,209 - INFO - Préparation du diagramme...
+2025-08-31 09:15:53,210 - INFO - Génération du diagramme en cours...
+2025-08-31 09:15:53,628 - ERROR - Erreur lors de la génération du diagramme: 'list' object has no attribute 'items'
+Traceback (most recent call last):
+  File "d:\IA Water Data Analysis\generateur_STEP\diagramme_flux.py", line 1018, in generer_diagramme_station
+    diagramme.generer_diagramme(liste_ouvrages, station.get('nom', 'Station inconnue'))
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\IA Water Data Analysis\generateur_STEP\diagramme_flux.py", line 884, in generer_diagramme
+    fig, ax = self.dessiner_diagramme(ouvrages_positionnes, titre)
+              ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\IA Water Data Analysis\generateur_STEP\diagramme_flux.py", line 702, in dessiner_diagramme
+    self._dessiner_fleches(ax, ouvrages_positionnes)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\IA Water Data Analysis\generateur_STEP\diagramme_flux.py", line 297, in _dessiner_fleches
+    for filiere, ouvrages in ouvrages_par_filiere.items():
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'items'
+2025-08-31 09:17:29,776 - INFO - Vérification des états des ouvrages...
+2025-08-31 09:17:29,777 - INFO - Préparation du diagramme...
+2025-08-31 09:17:29,778 - INFO - Génération du diagramme en cours...
+2025-08-31 09:21:09,709 - INFO - Vérification des états des ouvrages...
+2025-08-31 09:21:09,761 - INFO - Préparation du diagramme...
+2025-08-31 09:21:09,762 - INFO - Génération du diagramme en cours...
+2025-08-31 09:23:29,316 - INFO - Vérification des états des ouvrages...
+2025-08-31 09:23:29,317 - INFO - Préparation du diagramme...
+2025-08-31 09:23:29,318 - INFO - Génération du diagramme en cours...
+2025-08-31 09:27:09,977 - INFO - Vérification des états des ouvrages...
+2025-08-31 09:27:09,978 - INFO - Préparation du diagramme...
+2025-08-31 09:27:09,978 - INFO - Génération du diagramme en cours...
+2025-08-31 09:40:17,141 - INFO - Début de la génération du diagramme pour: Chlef - MAJ 31/08/2025 - boues_activées
+2025-08-31 09:40:17,375 - INFO - Nombre d'ouvrages à afficher: 10
+2025-08-31 09:40:17,375 - INFO - Traitement de l'ouvrage 1/10: Dégrillage
+2025-08-31 09:40:17,377 - INFO - Traitement de l'ouvrage 2/10: Dessablage/Dégraissage
+2025-08-31 09:40:17,378 - INFO - Traitement de l'ouvrage 3/10: Décanteur primaire
+2025-08-31 09:40:17,379 - INFO - Traitement de l'ouvrage 4/10: Bassins d'aération
+2025-08-31 09:40:17,381 - INFO - Traitement de l'ouvrage 5/10: Décanteur secondaire
+2025-08-31 09:40:17,383 - INFO - Traitement de l'ouvrage 6/10: Filtration sur sable
+2025-08-31 09:40:17,386 - INFO - Traitement de l'ouvrage 7/10: Désinfection UV
+2025-08-31 09:40:17,388 - INFO - Traitement de l'ouvrage 8/10: Épaississement des boues
+2025-08-31 09:40:17,391 - INFO - Traitement de l'ouvrage 9/10: Déshydratation mécanique
+2025-08-31 09:40:17,393 - INFO - Traitement de l'ouvrage 10/10: Lits de séchage
+2025-08-31 09:40:17,498 - INFO - Diagramme généré avec succès
+2025-08-31 09:41:14,647 - INFO - Début de la génération du diagramme pour: Chettia - MAJ 31/08/2025 - boues_activées
+2025-08-31 09:41:14,785 - INFO - Nombre d'ouvrages à afficher: 10
+2025-08-31 09:41:14,786 - INFO - Traitement de l'ouvrage 1/10: Dégrillage
+2025-08-31 09:41:14,787 - INFO - Traitement de l'ouvrage 2/10: Dessablage/Dégraissage
+2025-08-31 09:41:14,789 - INFO - Traitement de l'ouvrage 3/10: Décanteur primaire
+2025-08-31 09:41:14,790 - INFO - Traitement de l'ouvrage 4/10: Bassins d'aération
+2025-08-31 09:41:14,791 - INFO - Traitement de l'ouvrage 5/10: Décanteur secondaire
+2025-08-31 09:41:14,792 - INFO - Traitement de l'ouvrage 6/10: Filtration sur sable
+2025-08-31 09:41:14,794 - INFO - Traitement de l'ouvrage 7/10: Désinfection UV
+2025-08-31 09:41:14,833 - INFO - Traitement de l'ouvrage 8/10: Épaississement des boues
+2025-08-31 09:41:14,835 - INFO - Traitement de l'ouvrage 9/10: Déshydratation mécanique
+2025-08-31 09:41:14,837 - INFO - Traitement de l'ouvrage 10/10: Lits de séchage
+2025-08-31 09:41:14,899 - INFO - Diagramme généré avec succès
+2025-08-31 09:41:23,077 - ERROR - Erreur lors de l'affichage du diagramme : 'etat_ouvrages'
+2025-08-31 09:41:27,703 - INFO - Début de la génération du diagramme pour: Essai - MAJ 31/08/2025 - lagunage_aéré
+2025-08-31 09:41:27,838 - INFO - Nombre d'ouvrages à afficher: 9
+2025-08-31 09:41:27,838 - INFO - Traitement de l'ouvrage 1/9: Dégrillage
+2025-08-31 09:41:27,839 - INFO - Traitement de l'ouvrage 2/9: Dessablage/Dégraissage
+2025-08-31 09:41:27,841 - INFO - Traitement de l'ouvrage 3/9: Décanteur primaire
+2025-08-31 09:41:27,842 - INFO - Traitement de l'ouvrage 4/9: Décanteur secondaire
+2025-08-31 09:41:27,843 - INFO - Traitement de l'ouvrage 5/9: Filtration sur sable
+2025-08-31 09:41:27,845 - INFO - Traitement de l'ouvrage 6/9: Désinfection UV
+2025-08-31 09:41:27,847 - INFO - Traitement de l'ouvrage 7/9: Lagune aérée
+2025-08-31 09:41:27,849 - INFO - Traitement de l'ouvrage 8/9: Épaississement des boues
+2025-08-31 09:41:27,851 - INFO - Traitement de l'ouvrage 9/9: Séchage naturel sur lit de séchage
+2025-08-31 09:41:27,895 - INFO - Diagramme généré avec succès
+2025-08-31 09:44:07,415 - INFO - Début de la génération du diagramme pour: Chlef - MAJ 31/08/2025 - boues_activées
+2025-08-31 09:44:07,645 - INFO - Nombre d'ouvrages à afficher: 10
+2025-08-31 09:44:07,646 - INFO - Traitement de l'ouvrage 1/10: Dégrillage
+2025-08-31 09:44:07,647 - INFO - Traitement de l'ouvrage 2/10: Dessablage/Dégraissage
+2025-08-31 09:44:07,648 - INFO - Traitement de l'ouvrage 3/10: Décanteur primaire
+2025-08-31 09:44:07,650 - INFO - Traitement de l'ouvrage 4/10: Bassins d'aération
+2025-08-31 09:44:07,651 - INFO - Traitement de l'ouvrage 5/10: Décanteur secondaire
+2025-08-31 09:44:07,653 - INFO - Traitement de l'ouvrage 6/10: Filtration sur sable
+2025-08-31 09:44:07,656 - INFO - Traitement de l'ouvrage 7/10: Désinfection UV
+2025-08-31 09:44:07,657 - INFO - Traitement de l'ouvrage 8/10: Épaississement des boues
+2025-08-31 09:44:07,659 - INFO - Traitement de l'ouvrage 9/10: Déshydratation mécanique
+2025-08-31 09:44:07,660 - INFO - Traitement de l'ouvrage 10/10: Lits de séchage
+2025-08-31 09:44:07,735 - INFO - Diagramme généré avec succès
+2025-08-31 09:44:53,142 - INFO - Début de la génération du diagramme pour: Chlef - MAJ 31/08/2025 - boues_activées
+2025-08-31 09:44:53,356 - INFO - Nombre d'ouvrages à afficher: 10
+2025-08-31 09:44:53,357 - INFO - Traitement de l'ouvrage 1/10: Dégrillage
+2025-08-31 09:44:53,358 - INFO - Traitement de l'ouvrage 2/10: Dessablage/Dégraissage
+2025-08-31 09:44:53,359 - INFO - Traitement de l'ouvrage 3/10: Décanteur primaire
+2025-08-31 09:44:53,360 - INFO - Traitement de l'ouvrage 4/10: Bassins d'aération
+2025-08-31 09:44:53,362 - INFO - Traitement de l'ouvrage 5/10: Décanteur secondaire
+2025-08-31 09:44:53,364 - INFO - Traitement de l'ouvrage 6/10: Filtration sur sable
+2025-08-31 09:44:53,365 - INFO - Traitement de l'ouvrage 7/10: Désinfection UV
+2025-08-31 09:44:53,366 - INFO - Traitement de l'ouvrage 8/10: Épaississement des boues
+2025-08-31 09:44:53,368 - INFO - Traitement de l'ouvrage 9/10: Déshydratation mécanique
+2025-08-31 09:44:53,369 - INFO - Traitement de l'ouvrage 10/10: Lits de séchage
+2025-08-31 09:44:53,441 - INFO - Diagramme généré avec succès
+2025-08-31 09:50:42,280 - INFO - Liste des ouvrages à afficher: [('Dégrillage', 'filiere_eau'), ('Dessablage/Dégraissage', 'filiere_eau'), ('Décanteur primaire', 'filiere_eau'), ("Bassins d'aération", 'filiere_eau'), ('Décanteur secondaire', 'filiere_eau'), ('Filtration sur sable', 'filiere_eau'), ('Désinfection UV', 'filiere_eau'), ('Épaississement des boues', 'filiere_boue'), ('Déshydratation mécanique', 'filiere_boue'), ('Lits de séchage', 'filiere_boue')]
+2025-08-31 09:50:42,280 - INFO - Début de la génération du diagramme pour: Chlef - MAJ 31/08/2025 - boues_activées
+2025-08-31 09:50:42,519 - INFO - Nombre d'ouvrages à afficher: 10
+2025-08-31 09:50:42,520 - INFO - Ouvrages classés par filière: {'filiere_eau': [{'nom': 'Dégrillage', 'etat': 'en_maintenance', 'filiere': 'filiere_eau'}, {'nom': 'Dessablage/Dégraissage', 'etat': 'hors_service', 'filiere': 'filiere_eau'}, {'nom': 'Décanteur primaire', 'etat': 'inexistant', 'filiere': 'filiere_eau'}, {'nom': "Bassins d'aération", 'etat': 'en_service', 'filiere': 'filiere_eau'}, {'nom': 'Décanteur secondaire', 'etat': 'en_service', 'filiere': 'filiere_eau'}, {'nom': 'Filtration sur sable', 'etat': 'inexistant', 'filiere': 'filiere_eau'}, {'nom': 'Désinfection UV', 'etat': 'inexistant', 'filiere': 'filiere_eau'}], 'filiere_boue': [{'nom': 'Épaississement des boues', 'etat': 'hors_service', 'filiere': 'filiere_boue'}, {'nom': 'Déshydratation mécanique', 'etat': 'inexistant', 'filiere': 'filiere_boue'}, {'nom': 'Lits de séchage', 'etat': 'en_service', 'filiere': 'filiere_boue'}]}
+2025-08-31 09:50:42,520 - INFO - Ouvrages eau: ['Dégrillage', 'Dessablage/Dégraissage', 'Décanteur primaire', "Bassins d'aération", 'Décanteur secondaire', 'Filtration sur sable', 'Désinfection UV']
+2025-08-31 09:50:42,521 - INFO - Ouvrages boue: ['Épaississement des boues', 'Déshydratation mécanique', 'Lits de séchage']
+2025-08-31 09:50:42,521 - INFO - Traitement de l'ouvrage 1/10: Dégrillage (filière: filiere_eau)
+2025-08-31 09:50:42,522 - INFO - Couleur de fond pour Dégrillage: #B3E5FC (eau)
+2025-08-31 09:50:42,522 - INFO - Couleur finale pour Dégrillage: #e8cb50 (état: en_maintenance)
+2025-08-31 09:50:42,524 - INFO - Traitement de l'ouvrage 2/10: Dessablage/Dégraissage (filière: filiere_eau)
+2025-08-31 09:50:42,524 - INFO - Couleur de fond pour Dessablage/Dégraissage: #B3E5FC (eau)
+2025-08-31 09:50:42,524 - INFO - Couleur finale pour Dessablage/Dégraissage: #a4b3ba (état: hors_service)
+2025-08-31 09:50:42,527 - INFO - Traitement de l'ouvrage 3/10: Décanteur primaire (filière: filiere_eau)
+2025-08-31 09:50:42,527 - INFO - Couleur de fond pour Décanteur primaire: #B3E5FC (eau)
+2025-08-31 09:50:42,528 - INFO - Couleur finale pour Décanteur primaire: #e8f7fe (état: inexistant)
+2025-08-31 09:50:42,530 - INFO - Traitement de l'ouvrage 4/10: Bassins d'aération (filière: filiere_eau)
+2025-08-31 09:50:42,530 - INFO - Couleur de fond pour Bassins d'aération: #B3E5FC (eau)
+2025-08-31 09:50:42,532 - INFO - Traitement de l'ouvrage 5/10: Décanteur secondaire (filière: filiere_eau)
+2025-08-31 09:50:42,533 - INFO - Couleur de fond pour Décanteur secondaire: #B3E5FC (eau)
+2025-08-31 09:50:42,535 - INFO - Traitement de l'ouvrage 6/10: Filtration sur sable (filière: filiere_eau)
+2025-08-31 09:50:42,536 - INFO - Couleur de fond pour Filtration sur sable: #B3E5FC (eau)
+2025-08-31 09:50:42,536 - INFO - Couleur finale pour Filtration sur sable: #e8f7fe (état: inexistant)
+2025-08-31 09:50:42,538 - INFO - Traitement de l'ouvrage 7/10: Désinfection UV (filière: filiere_eau)
+2025-08-31 09:50:42,539 - INFO - Couleur de fond pour Désinfection UV: #B3E5FC (eau)
+2025-08-31 09:50:42,539 - INFO - Couleur finale pour Désinfection UV: #e8f7fe (état: inexistant)
+2025-08-31 09:50:42,541 - INFO - Traitement de l'ouvrage 8/10: Épaississement des boues (filière: filiere_boue)
+2025-08-31 09:50:42,541 - INFO - Couleur de fond pour Épaississement des boues: #D7CCC8 (boue)
+2025-08-31 09:50:42,541 - INFO - Couleur finale pour Épaississement des boues: #afabaa (état: hors_service)
+2025-08-31 09:50:42,543 - INFO - Traitement de l'ouvrage 9/10: Déshydratation mécanique (filière: filiere_boue)
+2025-08-31 09:50:42,543 - INFO - Couleur de fond pour Déshydratation mécanique: #D7CCC8 (boue)
+2025-08-31 09:50:42,544 - INFO - Couleur finale pour Déshydratation mécanique: #f3efee (état: inexistant)
+2025-08-31 09:50:42,545 - INFO - Traitement de l'ouvrage 10/10: Lits de séchage (filière: filiere_boue)
+2025-08-31 09:50:42,546 - INFO - Couleur de fond pour Lits de séchage: #D7CCC8 (boue)
+2025-08-31 09:50:42,623 - INFO - Diagramme généré avec succès
+2025-08-31 09:54:35,119 - INFO - Liste des ouvrages à afficher: [('Dégrillage', 'filiere_eau'), ('Dessablage/Dégraissage', 'filiere_eau'), ('Décanteur primaire', 'filiere_eau'), ("Bassins d'aération", 'filiere_eau'), ('Décanteur secondaire', 'filiere_eau'), ('Filtration sur sable', 'filiere_eau'), ('Désinfection UV', 'filiere_eau'), ('Épaississement des boues', 'filiere_boue'), ('Déshydratation mécanique', 'filiere_boue'), ('Lits de séchage', 'filiere_boue')]
+2025-08-31 09:54:35,120 - INFO - Début de la génération du diagramme pour: Chlef - MAJ 31/08/2025 - boues_activées
+2025-08-31 09:54:35,339 - INFO - Nombre d'ouvrages à afficher: 10
+2025-08-31 09:54:35,339 - INFO - Ouvrages classés par filière: {'filiere_eau': [{'nom': 'Dégrillage', 'etat': 'en_maintenance', 'filiere': 'filiere_eau'}, {'nom': 'Dessablage/Dégraissage', 'etat': 'hors_service', 'filiere': 'filiere_eau'}, {'nom': 'Décanteur primaire', 'etat': 'inexistant', 'filiere': 'filiere_eau'}, {'nom': "Bassins d'aération", 'etat': 'en_service', 'filiere': 'filiere_eau'}, {'nom': 'Décanteur secondaire', 'etat': 'en_service', 'filiere': 'filiere_eau'}, {'nom': 'Filtration sur sable', 'etat': 'inexistant', 'filiere': 'filiere_eau'}, {'nom': 'Désinfection UV', 'etat': 'inexistant', 'filiere': 'filiere_eau'}], 'filiere_boue': [{'nom': 'Épaississement des boues', 'etat': 'hors_service', 'filiere': 'filiere_boue'}, {'nom': 'Déshydratation mécanique', 'etat': 'inexistant', 'filiere': 'filiere_boue'}, {'nom': 'Lits de séchage', 'etat': 'en_service', 'filiere': 'filiere_boue'}]}
+2025-08-31 09:54:35,340 - INFO - Ouvrages eau: ['Dégrillage', 'Dessablage/Dégraissage', 'Décanteur primaire', "Bassins d'aération", 'Décanteur secondaire', 'Filtration sur sable', 'Désinfection UV']
+2025-08-31 09:54:35,340 - INFO - Ouvrages boue: ['Épaississement des boues', 'Déshydratation mécanique', 'Lits de séchage']
+2025-08-31 09:54:35,341 - INFO - Traitement de l'ouvrage 1/19: Dégrillage (filière: filiere_eau)
+2025-08-31 09:54:35,341 - INFO - Couleur de fond pour Dégrillage: #B3E5FC (eau)
+2025-08-31 09:54:35,341 - INFO - Couleur finale pour Dégrillage: #e8cb50 (état: en_maintenance)
+2025-08-31 09:54:35,343 - INFO - Traitement de l'ouvrage 2/19: inconnu (filière: filiere_eau)
+2025-08-31 09:54:35,344 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 4.5, 'y1': 12.75, 'x2': 4.5, 'y2': 12.75, 'filiere': 'filiere_eau'}
+2025-08-31 09:54:35,344 - INFO - Traitement de l'ouvrage 3/19: Dessablage/Dégraissage (filière: filiere_eau)
+2025-08-31 09:54:35,344 - INFO - Couleur de fond pour Dessablage/Dégraissage: #B3E5FC (eau)
+2025-08-31 09:54:35,345 - INFO - Couleur finale pour Dessablage/Dégraissage: #a4b3ba (état: hors_service)
+2025-08-31 09:54:35,347 - INFO - Traitement de l'ouvrage 4/19: inconnu (filière: filiere_eau)
+2025-08-31 09:54:35,347 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 8.0, 'y1': 12.75, 'x2': 8.0, 'y2': 12.75, 'filiere': 'filiere_eau'}
+2025-08-31 09:54:35,348 - INFO - Traitement de l'ouvrage 5/19: Décanteur primaire (filière: filiere_eau)
+2025-08-31 09:54:35,348 - INFO - Couleur de fond pour Décanteur primaire: #B3E5FC (eau)
+2025-08-31 09:54:35,348 - INFO - Couleur finale pour Décanteur primaire: #e8f7fe (état: inexistant)
+2025-08-31 09:54:35,350 - INFO - Traitement de l'ouvrage 6/19: inconnu (filière: filiere_eau)
+2025-08-31 09:54:35,350 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 11.5, 'y1': 12.75, 'x2': 11.5, 'y2': 12.75, 'filiere': 'filiere_eau'}
+2025-08-31 09:54:35,351 - INFO - Traitement de l'ouvrage 7/19: Bassins d'aération (filière: filiere_eau)
+2025-08-31 09:54:35,351 - INFO - Couleur de fond pour Bassins d'aération: #B3E5FC (eau)
+2025-08-31 09:54:35,352 - INFO - Traitement de l'ouvrage 8/19: inconnu (filière: filiere_eau)
+2025-08-31 09:54:35,352 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 15.0, 'y1': 12.75, 'x2': 15.0, 'y2': 12.75, 'filiere': 'filiere_eau'}
+2025-08-31 09:54:35,353 - INFO - Traitement de l'ouvrage 9/19: Décanteur secondaire (filière: filiere_eau)
+2025-08-31 09:54:35,373 - INFO - Couleur de fond pour Décanteur secondaire: #B3E5FC (eau)
+2025-08-31 09:54:35,376 - INFO - Traitement de l'ouvrage 10/19: inconnu (filière: filiere_eau)
+2025-08-31 09:54:35,377 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 18.5, 'y1': 12.75, 'x2': 18.5, 'y2': 12.75, 'filiere': 'filiere_eau'}
+2025-08-31 09:54:35,377 - INFO - Traitement de l'ouvrage 11/19: Filtration sur sable (filière: filiere_eau)
+2025-08-31 09:54:35,378 - INFO - Couleur de fond pour Filtration sur sable: #B3E5FC (eau)
+2025-08-31 09:54:35,378 - INFO - Couleur finale pour Filtration sur sable: #e8f7fe (état: inexistant)
+2025-08-31 09:54:35,380 - INFO - Traitement de l'ouvrage 12/19: inconnu (filière: filiere_eau)
+2025-08-31 09:54:35,380 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 22.0, 'y1': 12.75, 'x2': 22.0, 'y2': 12.75, 'filiere': 'filiere_eau'}
+2025-08-31 09:54:35,381 - INFO - Traitement de l'ouvrage 13/19: Désinfection UV (filière: filiere_eau)
+2025-08-31 09:54:35,381 - INFO - Couleur de fond pour Désinfection UV: #B3E5FC (eau)
+2025-08-31 09:54:35,381 - INFO - Couleur finale pour Désinfection UV: #e8f7fe (état: inexistant)
+2025-08-31 09:54:35,383 - INFO - Traitement de l'ouvrage 14/19: inconnu (filière: filiere_eau)
+2025-08-31 09:54:35,383 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 25.25, 'y1': 11.5, 'x2': 3.25, 'y2': 9.5, 'filiere': 'filiere_eau', 'courbe': True}
+2025-08-31 09:54:35,384 - INFO - Traitement de l'ouvrage 15/19: Épaississement des boues (filière: filiere_boue)
+2025-08-31 09:54:35,384 - INFO - Couleur de fond pour Épaississement des boues: #D7CCC8 (boue)
+2025-08-31 09:54:35,384 - INFO - Couleur finale pour Épaississement des boues: #afabaa (état: hors_service)
+2025-08-31 09:54:35,386 - INFO - Traitement de l'ouvrage 16/19: inconnu (filière: filiere_boue)
+2025-08-31 09:54:35,386 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 4.5, 'y1': 9.75, 'x2': 4.5, 'y2': 9.75, 'filiere': 'filiere_boue'}
+2025-08-31 09:54:35,387 - INFO - Traitement de l'ouvrage 17/19: Déshydratation mécanique (filière: filiere_boue)
+2025-08-31 09:54:35,387 - INFO - Couleur de fond pour Déshydratation mécanique: #D7CCC8 (boue)
+2025-08-31 09:54:35,387 - INFO - Couleur finale pour Déshydratation mécanique: #f3efee (état: inexistant)
+2025-08-31 09:54:35,389 - INFO - Traitement de l'ouvrage 18/19: inconnu (filière: filiere_boue)
+2025-08-31 09:54:35,389 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 8.0, 'y1': 9.75, 'x2': 8.0, 'y2': 9.75, 'filiere': 'filiere_boue'}
+2025-08-31 09:54:35,389 - INFO - Traitement de l'ouvrage 19/19: Lits de séchage (filière: filiere_boue)
+2025-08-31 09:54:35,390 - INFO - Couleur de fond pour Lits de séchage: #D7CCC8 (boue)
+2025-08-31 09:54:35,466 - INFO - Diagramme généré avec succès
+2025-08-31 09:57:59,251 - INFO - Liste des ouvrages à afficher: [('Dégrillage', 'filiere_eau'), ('Dessablage/Dégraissage', 'filiere_eau'), ('Décanteur primaire', 'filiere_eau'), ("Bassins d'aération", 'filiere_eau'), ('Décanteur secondaire', 'filiere_eau'), ('Filtration sur sable', 'filiere_eau'), ('Désinfection UV', 'filiere_eau'), ('Épaississement des boues', 'filiere_boue'), ('Déshydratation mécanique', 'filiere_boue'), ('Lits de séchage', 'filiere_boue')]
+2025-08-31 09:57:59,252 - INFO - Début de la génération du diagramme pour: Chlef - MAJ 31/08/2025 - boues_activées
+2025-08-31 09:57:59,476 - INFO - Nombre d'ouvrages à afficher: 10
+2025-08-31 09:57:59,476 - INFO - Ouvrages classés par filière: {'filiere_eau': [{'nom': 'Dégrillage', 'etat': 'en_maintenance', 'filiere': 'filiere_eau'}, {'nom': 'Dessablage/Dégraissage', 'etat': 'hors_service', 'filiere': 'filiere_eau'}, {'nom': 'Décanteur primaire', 'etat': 'inexistant', 'filiere': 'filiere_eau'}, {'nom': "Bassins d'aération", 'etat': 'en_service', 'filiere': 'filiere_eau'}, {'nom': 'Décanteur secondaire', 'etat': 'en_service', 'filiere': 'filiere_eau'}, {'nom': 'Filtration sur sable', 'etat': 'inexistant', 'filiere': 'filiere_eau'}, {'nom': 'Désinfection UV', 'etat': 'inexistant', 'filiere': 'filiere_eau'}], 'filiere_boue': [{'nom': 'Épaississement des boues', 'etat': 'hors_service', 'filiere': 'filiere_boue'}, {'nom': 'Déshydratation mécanique', 'etat': 'inexistant', 'filiere': 'filiere_boue'}, {'nom': 'Lits de séchage', 'etat': 'en_service', 'filiere': 'filiere_boue'}]}
+2025-08-31 09:57:59,477 - INFO - Ouvrages eau: ['Dégrillage', 'Dessablage/Dégraissage', 'Décanteur primaire', "Bassins d'aération", 'Décanteur secondaire', 'Filtration sur sable', 'Désinfection UV']
+2025-08-31 09:57:59,477 - INFO - Ouvrages boue: ['Épaississement des boues', 'Déshydratation mécanique', 'Lits de séchage']
+2025-08-31 09:57:59,478 - INFO - Traitement de l'ouvrage 1/34: inconnu (filière: filiere_eau)
+2025-08-31 09:57:59,478 - INFO - Couleur de fond pour inconnu: #B3E5FC (eau)
+2025-08-31 09:57:59,480 - ERROR - Erreur lors de l'ajout du texte pour l'ouvrage inconnu: 'nom'
+2025-08-31 09:57:59,480 - INFO - Traitement de l'ouvrage 2/34: inconnu (filière: filiere_eau)
+2025-08-31 09:57:59,480 - ERROR - Données manquantes pour l'ouvrage: {'type': 'etape_label', 'etape': 'Prétraitement', 'x': 1.0, 'y': 13.0, 'filiere': 'filiere_eau'}
+2025-08-31 09:57:59,480 - INFO - Traitement de l'ouvrage 3/34: Dégrillage (filière: filiere_eau)
+2025-08-31 09:57:59,481 - INFO - Couleur de fond pour Dégrillage: #B3E5FC (eau)
+2025-08-31 09:57:59,481 - INFO - Couleur finale pour Dégrillage: #e8cb50 (état: en_maintenance)
+2025-08-31 09:57:59,482 - INFO - Traitement de l'ouvrage 4/34: inconnu (filière: filiere_eau)
+2025-08-31 09:57:59,483 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 6.5, 'y1': 13.75, 'x2': 6.5, 'y2': 13.75, 'filiere': 'filiere_eau'}
+2025-08-31 09:57:59,483 - INFO - Traitement de l'ouvrage 5/34: Dessablage/Dégraissage (filière: filiere_eau)
+2025-08-31 09:57:59,483 - INFO - Couleur de fond pour Dessablage/Dégraissage: #B3E5FC (eau)
+2025-08-31 09:57:59,484 - INFO - Couleur finale pour Dessablage/Dégraissage: #a4b3ba (état: hors_service)
+2025-08-31 09:57:59,485 - INFO - Traitement de l'ouvrage 6/34: inconnu (filière: filiere_eau)
+2025-08-31 09:57:59,486 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 10.0, 'y1': 13.75, 'x2': 4.0, 'y2': 16.25, 'filiere': 'filiere_eau', 'courbe': True}
+2025-08-31 09:57:59,486 - INFO - Traitement de l'ouvrage 7/34: inconnu (filière: filiere_eau)
+2025-08-31 09:57:59,486 - ERROR - Données manquantes pour l'ouvrage: {'type': 'etape_label', 'etape': 'Traitement primaire', 'x': 1.0, 'y': 15.5, 'filiere': 'filiere_eau'}
+2025-08-31 09:57:59,487 - INFO - Traitement de l'ouvrage 8/34: Décanteur primaire (filière: filiere_eau)
+2025-08-31 09:57:59,487 - INFO - Couleur de fond pour Décanteur primaire: #B3E5FC (eau)
+2025-08-31 09:57:59,487 - INFO - Couleur finale pour Décanteur primaire: #e8f7fe (état: inexistant)
+2025-08-31 09:57:59,489 - INFO - Traitement de l'ouvrage 9/34: inconnu (filière: filiere_eau)
+2025-08-31 09:57:59,490 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 6.5, 'y1': 16.25, 'x2': 4.0, 'y2': 18.75, 'filiere': 'filiere_eau', 'courbe': True}
+2025-08-31 09:57:59,490 - INFO - Traitement de l'ouvrage 10/34: inconnu (filière: filiere_eau)
+2025-08-31 09:57:59,491 - ERROR - Données manquantes pour l'ouvrage: {'type': 'etape_label', 'etape': 'Traitement secondaire', 'x': 1.0, 'y': 18.0, 'filiere': 'filiere_eau'}
+2025-08-31 09:57:59,491 - INFO - Traitement de l'ouvrage 11/34: Bassins d'aération (filière: filiere_eau)
+2025-08-31 09:57:59,491 - INFO - Couleur de fond pour Bassins d'aération: #B3E5FC (eau)
+2025-08-31 09:57:59,495 - INFO - Traitement de l'ouvrage 12/34: inconnu (filière: filiere_eau)
+2025-08-31 09:57:59,495 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 6.5, 'y1': 18.75, 'x2': 6.5, 'y2': 18.75, 'filiere': 'filiere_eau'}
+2025-08-31 09:57:59,495 - INFO - Traitement de l'ouvrage 13/34: Décanteur secondaire (filière: filiere_eau)
+2025-08-31 09:57:59,496 - INFO - Couleur de fond pour Décanteur secondaire: #B3E5FC (eau)
+2025-08-31 09:57:59,497 - INFO - Traitement de l'ouvrage 14/34: inconnu (filière: filiere_eau)
+2025-08-31 09:57:59,497 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 10.0, 'y1': 18.75, 'x2': 4.0, 'y2': 21.25, 'filiere': 'filiere_eau', 'courbe': True}
+2025-08-31 09:57:59,498 - INFO - Traitement de l'ouvrage 15/34: inconnu (filière: filiere_eau)
+2025-08-31 09:57:59,498 - ERROR - Données manquantes pour l'ouvrage: {'type': 'etape_label', 'etape': 'Traitement tertiaire', 'x': 1.0, 'y': 20.5, 'filiere': 'filiere_eau'}
+2025-08-31 09:57:59,498 - INFO - Traitement de l'ouvrage 16/34: Filtration sur sable (filière: filiere_eau)
+2025-08-31 09:57:59,499 - INFO - Couleur de fond pour Filtration sur sable: #B3E5FC (eau)
+2025-08-31 09:57:59,499 - INFO - Couleur finale pour Filtration sur sable: #e8f7fe (état: inexistant)
+2025-08-31 09:57:59,500 - INFO - Traitement de l'ouvrage 17/34: inconnu (filière: filiere_eau)
+2025-08-31 09:57:59,500 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 6.5, 'y1': 21.25, 'x2': 6.5, 'y2': 21.25, 'filiere': 'filiere_eau'}
+2025-08-31 09:57:59,500 - INFO - Traitement de l'ouvrage 18/34: Désinfection UV (filière: filiere_eau)
+2025-08-31 09:57:59,501 - INFO - Couleur de fond pour Désinfection UV: #B3E5FC (eau)
+2025-08-31 09:57:59,501 - INFO - Couleur finale pour Désinfection UV: #e8f7fe (état: inexistant)
+2025-08-31 09:57:59,503 - INFO - Traitement de l'ouvrage 19/34: inconnu (filière: filiere_eau)
+2025-08-31 09:57:59,503 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 10.0, 'y1': 21.25, 'x2': 4.0, 'y2': 23.75, 'filiere': 'filiere_eau', 'courbe': True}
+2025-08-31 09:57:59,503 - INFO - Traitement de l'ouvrage 20/34: inconnu (filière: filiere_eau)
+2025-08-31 09:57:59,503 - ERROR - Données manquantes pour l'ouvrage: {'type': 'etape_label', 'etape': 'Rejet', 'x': 1.0, 'y': 23.0, 'filiere': 'filiere_eau'}
+2025-08-31 09:57:59,504 - INFO - Traitement de l'ouvrage 21/34: inconnu (filière: filiere_boue)
+2025-08-31 09:57:59,504 - INFO - Couleur de fond pour inconnu: #D7CCC8 (boue)
+2025-08-31 09:57:59,507 - ERROR - Erreur lors de l'ajout du texte pour l'ouvrage inconnu: 'nom'
+2025-08-31 09:57:59,508 - INFO - Traitement de l'ouvrage 22/34: inconnu (filière: filiere_boue)
+2025-08-31 09:57:59,508 - ERROR - Données manquantes pour l'ouvrage: {'type': 'etape_label', 'etape': 'Prétraitement', 'x': 1.0, 'y': 11.0, 'filiere': 'filiere_boue'}
+2025-08-31 09:57:59,509 - INFO - Traitement de l'ouvrage 23/34: inconnu (filière: filiere_boue)
+2025-08-31 09:57:59,509 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 3.0, 'y1': 11.75, 'x2': 4.0, 'y2': 14.25, 'filiere': 'filiere_boue', 'courbe': True}
+2025-08-31 09:57:59,510 - INFO - Traitement de l'ouvrage 24/34: inconnu (filière: filiere_boue)
+2025-08-31 09:57:59,510 - ERROR - Données manquantes pour l'ouvrage: {'type': 'etape_label', 'etape': 'Épaississement', 'x': 1.0, 'y': 13.5, 'filiere': 'filiere_boue'}
+2025-08-31 09:57:59,511 - INFO - Traitement de l'ouvrage 25/34: Épaississement des boues (filière: filiere_boue)
+2025-08-31 09:57:59,511 - INFO - Couleur de fond pour Épaississement des boues: #D7CCC8 (boue)
+2025-08-31 09:57:59,512 - INFO - Couleur finale pour Épaississement des boues: #afabaa (état: hors_service)
+2025-08-31 09:57:59,513 - INFO - Traitement de l'ouvrage 26/34: inconnu (filière: filiere_boue)
+2025-08-31 09:57:59,514 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 6.5, 'y1': 14.25, 'x2': 4.0, 'y2': 16.75, 'filiere': 'filiere_boue', 'courbe': True}
+2025-08-31 09:57:59,514 - INFO - Traitement de l'ouvrage 27/34: inconnu (filière: filiere_boue)
+2025-08-31 09:57:59,514 - ERROR - Données manquantes pour l'ouvrage: {'type': 'etape_label', 'etape': 'Stabilisation', 'x': 1.0, 'y': 16.0, 'filiere': 'filiere_boue'}
+2025-08-31 09:57:59,515 - INFO - Traitement de l'ouvrage 28/34: inconnu (filière: filiere_boue)
+2025-08-31 09:57:59,515 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 3.0, 'y1': 16.75, 'x2': 4.0, 'y2': 19.25, 'filiere': 'filiere_boue', 'courbe': True}
+2025-08-31 09:57:59,515 - INFO - Traitement de l'ouvrage 29/34: inconnu (filière: filiere_boue)
+2025-08-31 09:57:59,516 - ERROR - Données manquantes pour l'ouvrage: {'type': 'etape_label', 'etape': 'Déshydratation', 'x': 1.0, 'y': 18.5, 'filiere': 'filiere_boue'}
+2025-08-31 09:57:59,516 - INFO - Traitement de l'ouvrage 30/34: Déshydratation mécanique (filière: filiere_boue)
+2025-08-31 09:57:59,516 - INFO - Couleur de fond pour Déshydratation mécanique: #D7CCC8 (boue)
+2025-08-31 09:57:59,517 - INFO - Couleur finale pour Déshydratation mécanique: #f3efee (état: inexistant)
+2025-08-31 09:57:59,518 - INFO - Traitement de l'ouvrage 31/34: inconnu (filière: filiere_boue)
+2025-08-31 09:57:59,518 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 6.5, 'y1': 19.25, 'x2': 6.5, 'y2': 19.25, 'filiere': 'filiere_boue'}
+2025-08-31 09:57:59,519 - INFO - Traitement de l'ouvrage 32/34: Lits de séchage (filière: filiere_boue)
+2025-08-31 09:57:59,519 - INFO - Couleur de fond pour Lits de séchage: #D7CCC8 (boue)
+2025-08-31 09:57:59,521 - INFO - Traitement de l'ouvrage 33/34: inconnu (filière: filiere_boue)
+2025-08-31 09:57:59,521 - ERROR - Données manquantes pour l'ouvrage: {'type': 'fleche', 'x1': 10.0, 'y1': 19.25, 'x2': 4.0, 'y2': 21.75, 'filiere': 'filiere_boue', 'courbe': True}
+2025-08-31 09:57:59,522 - INFO - Traitement de l'ouvrage 34/34: inconnu (filière: filiere_boue)
+2025-08-31 09:57:59,522 - ERROR - Données manquantes pour l'ouvrage: {'type': 'etape_label', 'etape': 'Valorisation/Élimination', 'x': 1.0, 'y': 21.0, 'filiere': 'filiere_boue'}
+2025-08-31 09:57:59,589 - INFO - Diagramme généré avec succès
+2025-08-31 10:06:33,526 - ERROR - Erreur lors de l'affichage du diagramme : 'str' object has no attribute 'get'
+2025-08-31 10:06:39,577 - ERROR - Erreur lors de l'affichage du diagramme : 'str' object has no attribute 'get'
+2025-08-31 10:10:12,128 - INFO - Liste des ouvrages à afficher: [('Dégrillage', 'filiere_eau'), ('Dessablage/Dégraissage', 'filiere_eau'), ('Décanteur primaire', 'filiere_eau'), ("Bassins d'aération", 'filiere_eau'), ('Décanteur secondaire', 'filiere_eau'), ('Filtration sur sable', 'filiere_eau'), ('Désinfection UV', 'filiere_eau'), ('Épaississement des boues', 'filiere_boue'), ('Déshydratation mécanique', 'filiere_boue'), ('Lits de séchage', 'filiere_boue')]
+2025-08-31 10:10:12,129 - INFO - Début de la génération du diagramme pour: Chlef - MAJ 31/08/2025 - boues_activées
+2025-08-31 10:10:12,354 - INFO - Ouvrages filiere_eau: ['Dégrillage', 'Dessablage/Dégraissage', 'Décanteur primaire', "Bassins d'aération", 'Décanteur secondaire', 'Filtration sur sable', 'Désinfection UV']
+2025-08-31 10:10:12,355 - INFO - Ouvrages filiere_boue: ['Épaississement des boues', 'Déshydratation mécanique', 'Lits de séchage']
+2025-08-31 10:10:12,355 - INFO - Traitement de l'élément 1/20: inconnu (type: filiere_fond, filière: filiere_eau)
+2025-08-31 10:10:12,356 - INFO - Traitement de l'élément 2/20: Dégrillage (type: ouvrage, filière: filiere_eau)
+2025-08-31 10:10:12,358 - INFO - Traitement de l'élément 3/20: inconnu (type: fleche, filière: filiere_eau)
+2025-08-31 10:10:12,358 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': 12.25, 'x2': 3.25, 'y2': 11.75, 'filiere': 'filiere_eau'}
+2025-08-31 10:10:12,359 - INFO - Traitement de l'élément 4/20: Dessablage/Dégraissage (type: ouvrage, filière: filiere_eau)
+2025-08-31 10:10:12,360 - INFO - Traitement de l'élément 5/20: inconnu (type: fleche, filière: filiere_eau)
+2025-08-31 10:10:12,360 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': 9.75, 'x2': 3.25, 'y2': 9.25, 'filiere': 'filiere_eau'}
+2025-08-31 10:10:12,361 - INFO - Traitement de l'élément 6/20: Décanteur primaire (type: ouvrage, filière: filiere_eau)
+2025-08-31 10:10:12,362 - INFO - Traitement de l'élément 7/20: inconnu (type: fleche, filière: filiere_eau)
+2025-08-31 10:10:12,363 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': 7.25, 'x2': 3.25, 'y2': 6.75, 'filiere': 'filiere_eau'}
+2025-08-31 10:10:12,363 - INFO - Traitement de l'élément 8/20: Bassins d'aération (type: ouvrage, filière: filiere_eau)
+2025-08-31 10:10:12,365 - INFO - Traitement de l'élément 9/20: inconnu (type: fleche, filière: filiere_eau)
+2025-08-31 10:10:12,365 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': 4.75, 'x2': 3.25, 'y2': 4.25, 'filiere': 'filiere_eau'}
+2025-08-31 10:10:12,365 - INFO - Traitement de l'élément 10/20: Décanteur secondaire (type: ouvrage, filière: filiere_eau)
+2025-08-31 10:10:12,367 - INFO - Traitement de l'élément 11/20: inconnu (type: fleche, filière: filiere_eau)
+2025-08-31 10:10:12,368 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': 2.25, 'x2': 3.25, 'y2': 1.75, 'filiere': 'filiere_eau'}
+2025-08-31 10:10:12,368 - INFO - Traitement de l'élément 12/20: Filtration sur sable (type: ouvrage, filière: filiere_eau)
+2025-08-31 10:10:12,371 - INFO - Traitement de l'élément 13/20: inconnu (type: fleche, filière: filiere_eau)
+2025-08-31 10:10:12,372 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': -0.25, 'x2': 3.25, 'y2': -0.75, 'filiere': 'filiere_eau'}
+2025-08-31 10:10:12,372 - INFO - Traitement de l'élément 14/20: Désinfection UV (type: ouvrage, filière: filiere_eau)
+2025-08-31 10:10:12,374 - INFO - Traitement de l'élément 15/20: inconnu (type: filiere_fond, filière: filiere_boue)
+2025-08-31 10:10:12,377 - INFO - Traitement de l'élément 16/20: Épaississement des boues (type: ouvrage, filière: filiere_boue)
+2025-08-31 10:10:12,378 - INFO - Traitement de l'élément 17/20: inconnu (type: fleche, filière: filiere_boue)
+2025-08-31 10:10:12,378 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': 12.25, 'x2': 3.25, 'y2': 11.75, 'filiere': 'filiere_boue'}
+2025-08-31 10:10:12,379 - INFO - Traitement de l'élément 18/20: Déshydratation mécanique (type: ouvrage, filière: filiere_boue)
+2025-08-31 10:10:12,380 - INFO - Traitement de l'élément 19/20: inconnu (type: fleche, filière: filiere_boue)
+2025-08-31 10:10:12,380 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': 9.75, 'x2': 3.25, 'y2': 9.25, 'filiere': 'filiere_boue'}
+2025-08-31 10:10:12,381 - INFO - Traitement de l'élément 20/20: Lits de séchage (type: ouvrage, filière: filiere_boue)
+2025-08-31 10:10:12,455 - INFO - Diagramme généré avec succès
+2025-08-31 10:14:19,722 - INFO - Ouvrages classés par filière: {'filiere_eau': [{'nom': 'Dégrillage', 'etat': 'en_maintenance', 'filiere': 'filiere_eau'}, {'nom': 'Dessablage/Dégraissage', 'etat': 'hors_service', 'filiere': 'filiere_eau'}, {'nom': 'Décanteur primaire', 'etat': 'inexistant', 'filiere': 'filiere_eau'}, {'nom': "Bassins d'aération", 'etat': 'en_service', 'filiere': 'filiere_eau'}, {'nom': 'Décanteur secondaire', 'etat': 'en_service', 'filiere': 'filiere_eau'}, {'nom': 'Filtration sur sable', 'etat': 'inexistant', 'filiere': 'filiere_eau'}, {'nom': 'Désinfection UV', 'etat': 'inexistant', 'filiere': 'filiere_eau'}], 'filiere_boue': [{'nom': 'Épaississement des boues', 'etat': 'hors_service', 'filiere': 'filiere_boue'}, {'nom': 'Déshydratation mécanique', 'etat': 'inexistant', 'filiere': 'filiere_boue'}, {'nom': 'Lits de séchage', 'etat': 'en_service', 'filiere': 'filiere_boue'}]}
+2025-08-31 10:14:19,722 - INFO - Liste des ouvrages à afficher: [('Dégrillage', 'en_maintenance'), ('Dessablage/Dégraissage', 'hors_service'), ('Décanteur primaire', 'inexistant'), ("Bassins d'aération", 'en_service'), ('Décanteur secondaire', 'en_service'), ('Filtration sur sable', 'inexistant'), ('Désinfection UV', 'inexistant'), ('Épaississement des boues', 'hors_service'), ('Déshydratation mécanique', 'inexistant'), ('Lits de séchage', 'en_service')]
+2025-08-31 10:14:19,723 - INFO - Début de la génération du diagramme pour: Chlef - MAJ 31/08/2025 - boues_activées
+2025-08-31 10:14:19,939 - INFO - Ouvrages filiere_eau: ['Dégrillage', 'Dessablage/Dégraissage', 'Décanteur primaire', "Bassins d'aération", 'Décanteur secondaire', 'Filtration sur sable', 'Désinfection UV']
+2025-08-31 10:14:19,940 - INFO - Ouvrages filiere_boue: ['Épaississement des boues', 'Déshydratation mécanique', 'Lits de séchage']
+2025-08-31 10:14:19,940 - INFO - Traitement de l'élément 1/20: inconnu (type: filiere_fond, filière: filiere_eau)
+2025-08-31 10:14:19,942 - INFO - Traitement de l'élément 2/20: Dégrillage (type: ouvrage, filière: filiere_eau)
+2025-08-31 10:14:19,943 - INFO - Traitement de l'élément 3/20: inconnu (type: fleche, filière: filiere_eau)
+2025-08-31 10:14:19,943 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': 12.25, 'x2': 3.25, 'y2': 11.75, 'filiere': 'filiere_eau'}
+2025-08-31 10:14:19,943 - INFO - Traitement de l'élément 4/20: Dessablage/Dégraissage (type: ouvrage, filière: filiere_eau)
+2025-08-31 10:14:19,944 - INFO - Traitement de l'élément 5/20: inconnu (type: fleche, filière: filiere_eau)
+2025-08-31 10:14:19,945 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': 9.75, 'x2': 3.25, 'y2': 9.25, 'filiere': 'filiere_eau'}
+2025-08-31 10:14:19,945 - INFO - Traitement de l'élément 6/20: Décanteur primaire (type: ouvrage, filière: filiere_eau)
+2025-08-31 10:14:19,947 - INFO - Traitement de l'élément 7/20: inconnu (type: fleche, filière: filiere_eau)
+2025-08-31 10:14:19,947 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': 7.25, 'x2': 3.25, 'y2': 6.75, 'filiere': 'filiere_eau'}
+2025-08-31 10:14:19,948 - INFO - Traitement de l'élément 8/20: Bassins d'aération (type: ouvrage, filière: filiere_eau)
+2025-08-31 10:14:19,949 - INFO - Traitement de l'élément 9/20: inconnu (type: fleche, filière: filiere_eau)
+2025-08-31 10:14:19,949 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': 4.75, 'x2': 3.25, 'y2': 4.25, 'filiere': 'filiere_eau'}
+2025-08-31 10:14:19,950 - INFO - Traitement de l'élément 10/20: Décanteur secondaire (type: ouvrage, filière: filiere_eau)
+2025-08-31 10:14:19,952 - INFO - Traitement de l'élément 11/20: inconnu (type: fleche, filière: filiere_eau)
+2025-08-31 10:14:19,952 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': 2.25, 'x2': 3.25, 'y2': 1.75, 'filiere': 'filiere_eau'}
+2025-08-31 10:14:19,952 - INFO - Traitement de l'élément 12/20: Filtration sur sable (type: ouvrage, filière: filiere_eau)
+2025-08-31 10:14:19,954 - INFO - Traitement de l'élément 13/20: inconnu (type: fleche, filière: filiere_eau)
+2025-08-31 10:14:19,955 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': -0.25, 'x2': 3.25, 'y2': -0.75, 'filiere': 'filiere_eau'}
+2025-08-31 10:14:19,955 - INFO - Traitement de l'élément 14/20: Désinfection UV (type: ouvrage, filière: filiere_eau)
+2025-08-31 10:14:19,958 - INFO - Traitement de l'élément 15/20: inconnu (type: filiere_fond, filière: filiere_boue)
+2025-08-31 10:14:19,959 - INFO - Traitement de l'élément 16/20: Épaississement des boues (type: ouvrage, filière: filiere_boue)
+2025-08-31 10:14:19,961 - INFO - Traitement de l'élément 17/20: inconnu (type: fleche, filière: filiere_boue)
+2025-08-31 10:14:19,961 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': 12.25, 'x2': 3.25, 'y2': 11.75, 'filiere': 'filiere_boue'}
+2025-08-31 10:14:19,962 - INFO - Traitement de l'élément 18/20: Déshydratation mécanique (type: ouvrage, filière: filiere_boue)
+2025-08-31 10:14:19,964 - INFO - Traitement de l'élément 19/20: inconnu (type: fleche, filière: filiere_boue)
+2025-08-31 10:14:19,964 - ERROR - Données manquantes pour l'élément: {'type': 'fleche', 'x1': 3.25, 'y1': 9.75, 'x2': 3.25, 'y2': 9.25, 'filiere': 'filiere_boue'}
+2025-08-31 10:14:19,964 - INFO - Traitement de l'élément 20/20: Lits de séchage (type: ouvrage, filière: filiere_boue)
+2025-08-31 10:14:20,026 - INFO - Diagramme généré avec succès
