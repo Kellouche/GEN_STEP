@@ -34,11 +34,6 @@
     "traitement_tertiaire": [
       "Filtration sur sable",
       "Désinfection UV"
-    ],
-    "destinations": [
-      "Rejet en rivière",
-      "Irrigation",
-      "Réutilisation industrielle"
     ]
   },
   "SBR": {
@@ -71,10 +66,6 @@
     ],
     "traitement_tertiaire": [
       "Désinfection UV"
-    ],
-    "destinations": [
-      "Rejet en milieu naturel",
-      "Irrigation"
     ]
   },
   "biofiltre": {
@@ -107,10 +98,6 @@
     ],
     "traitement_tertiaire": [
       "Filtration membranaire"
-    ],
-    "destinations": [
-      "Rejet en milieu naturel",
-      "Réutilisation industrielle"
     ]
   },
   "MBR": {
@@ -143,10 +130,6 @@
     "traitement_tertiaire": [
       "Microfiltration/Ultrafiltration",
       "Désinfection UV"
-    ],
-    "destinations": [
-      "Rejet en milieu naturel",
-      "Réutilisation industrielle"
     ]
   },
   "lagunage_naturel": {
@@ -168,8 +151,7 @@
       "Évacuation des boues par curage périodique": "en_service",
       "Séchage naturel sur lit de séchage": "en_service"
     },
-    "traitement_tertiaire": [],
-    "destinations": ["Rejet en milieu naturel"]
+    "traitement_tertiaire": []
   },
   "zones_humides_construites": {
     "filiere_eau": {
@@ -201,11 +183,6 @@
     "traitement_tertiaire": [
       "Lagunage complémentaire",
       "Désinfection UV"
-    ],
-    "destinations": [
-      "Infiltration dans le sol",
-      "Rejet en milieu naturel",
-      "Irrigation"
     ]
   },
   "micro_station": {
@@ -239,10 +216,6 @@
     "traitement_tertiaire": [
       "Filtration sur sable",
       "Désinfection UV"
-    ],
-    "destinations": [
-      "Rejet en milieu naturel",
-      "Infiltration"
     ]
   },
   "lagunage_aéré": {
@@ -275,10 +248,6 @@
     "traitement_tertiaire": [
       "Filtration sur sable",
       "Désinfection UV"
-    ],
-    "destinations": [
-      "Rejet en milieu naturel",
-      "Irrigation"
     ]
   },
   "filtres_plantes_roseaux": {
@@ -342,10 +311,6 @@
     "traitement_tertiaire": [
       "Filtration sur sable",
       "Désinfection UV"
-    ],
-    "destinations": [
-      "Rejet en milieu naturel",
-      "Réutilisation industrielle"
     ]
   },
   "filtre_zeolithe": {
@@ -369,9 +334,6 @@
     "filiere_boue": [
       "Vidange périodique"
     ],
-    "traitement_tertiaire": [],
-    "destinations": [
-      "Infiltration dans le sol"
-    ]
+    "traitement_tertiaire": []
   }
 }

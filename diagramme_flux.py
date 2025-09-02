@@ -11,6 +11,7 @@ from datetime import datetime
 
 # Importer les utilitaires
 from utils import get_stations_list, update_stations_cache
+from gen_station import get_ouvrages_procede  # Ajout de l'import manquant
 
 # Configuration du logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -23,17 +24,21 @@ class DiagrammeFlux:
         """Initialise le diagramme avec les paramètres par défaut."""
         # Configuration des couleurs pour chaque état
         self.couleurs_etats = {
-            'en_service': '#4CAF50',     # Vert
-            'en_panne': '#F44336',       # Rouge
-            'en_maintenance': '#FF9800', # Orange
-            'hors_service': '#9E9E9E',   # Gris
-            'inexistant': '#FFFFFF',     # Blanc
-            'Nouvel équipement': '#03A9F4'  # Bleu pour les nouveaux équipements
+            'en_service': '#4CAF50',           # Vert
+            'en_panne': '#F44336',             # Rouge
+            'en_dysfonctionnement': '#FFC107',   # Ambre
+            'en_maintenance': '#FF9800',       # Orange
+            'hors_service': '#9E9E9E',         # Gris
+            'inexistant': '#FFFFFF',           # Blanc
+            'arret_volontaire': '#B22222',    # Rouge brique
+            'surcharge_sature': '#9C27B0',    # Violet
+            'nouvel_ouvrage': '#03A9F4'        # Bleu
         }
         
         # Configuration de la station
         self.type_station = type_station
         self.filiere_eau = {}
+        self.filiere_boue = []  # Ajout de l'attribut
         
         # Charger la configuration des types si un type de station est fourni
         if self.type_station:
@@ -70,7 +75,11 @@ class DiagrammeFlux:
             with open('data/types.json', 'r', encoding='utf-8') as f:
                 types_config = json.load(f)
                 if self.type_station in types_config:
-                    self.filiere_eau = types_config[self.type_station].get('filiere_eau', {})
+                    config_station = types_config[self.type_station]
+                    self.filiere_eau = config_station.get('filiere_eau', {})
+                    self.filiere_boue = config_station.get('filiere_boue', [])
+                    print(f"[DEBUG] Configuration chargée - filiere_eau: {self.filiere_eau}")
+                    print(f"[DEBUG] Configuration chargée - filiere_boue: {self.filiere_boue}")
         except Exception as e:
             log.error(f"Erreur lors du chargement de la configuration des types : {e}")
     
@@ -362,9 +371,21 @@ class DiagrammeFlux:
             'linewidth': 1.5,
             'alpha': 0.9,
             'arrowstyle': '-|>',
+            'shrinkA': 0,  # Désactiver le retrait au point de départ
+            'shrinkB': 0,  # Désactiver le retrait au point d'arrivée
+            'connectionstyle': 'arc3,rad=0.0',  # Ligne droite sans courbure
+        }
+        
+        # Style des flèches pour les boues
+        style_fleche_boues = {
+            'color': '#8B4513',  # Marron
+            'linestyle': '--',   # Trait pointillé
+            'linewidth': 1.5,
+            'alpha': 0.8,
+            'arrowstyle': '-|>',
             'shrinkA': 5,
             'shrinkB': 5,
-            'connectionstyle': 'arc3,rad=0.0',
+            'connectionstyle': 'arc3,rad=0.3',  # Courbure de la flèche
         }
         
         # 1. Dessiner les flèches entre les ouvrages d'une même filière
@@ -375,40 +396,34 @@ class DiagrammeFlux:
             # Trier les ouvrages de gauche à droite
             ouvrages_tries = sorted(ouvrages, key=lambda x: x['x'])
             
-            # Définir le style des flèches en fonction de la filière
-            if filiere in filieres_eau_ordre:
-                arrow_style = style_fleche_eau
-            else:
-                # Style pour les boues (flèches courbées en marron)
-                arrow_style = {
-                    'color': '#8B4513',  # Marron
-                    'linestyle': '--',   # Trait pointillé
-                    'linewidth': 1.5,
-                    'alpha': 0.8,
-                    'arrowstyle': '-|>',
-                    'shrinkA': 5,
-                    'shrinkB': 5,
-                    'connectionstyle': 'arc3,rad=0.3',
-                }
-            
-            # Dessiner les flèches entre les ouvrages consécutifs de la même filière
+            # Ne pas dessiner de flèches pour la filière boue
+            if 'boue' in filiere.lower():
+                continue
+                
+            # Pour les ouvrages sur la même ligne, flèche horizontale
             for i in range(len(ouvrages_tries) - 1):
                 source = ouvrages_tries[i]
                 cible = ouvrages_tries[i + 1]
                 
-                # Coordonnées de départ (centre du bord droit du bloc source)
+                # Coordonnées de départ (bord droit du bloc source)
                 x1 = source['x'] + source['largeur']
                 y1 = source['y'] + source['hauteur'] / 2
                 
-                # Coordonnées d'arrivée (centre du bord gauche du bloc cible)
+                # Coordonnées d'arrivée (bord gauche du bloc cible)
                 x2 = cible['x']
                 y2 = cible['y'] + cible['hauteur'] / 2
+                
+                # Style de flèche en fonction de la filière
+                if 'boue' in filiere.lower():
+                    arrow_style = style_fleche_boues
+                else:
+                    arrow_style = style_fleche_eau
                 
                 # Dessiner la flèche
                 ax.annotate(
                     "",
-                    xy=(x2, y2),  # Point d'arrivée (pointe de la flèche)
-                    xytext=(x1, y1),  # Point de départ
+                    xy=(x2, y2),     # Point d'arrivée (pointe de la flèche)
+                    xytext=(x1, y1), # Point de départ
                     arrowprops=arrow_style,
                     zorder=1  # Placer les flèches en arrière-plan
                 )
@@ -434,13 +449,13 @@ class DiagrammeFlux:
                 continue
             cible = premiers_ouvrages_suivants[0]
             
-            # Coordonnées de départ (bas du bloc source)
-            x1 = source['x'] + source['largeur'] / 2
-            y1 = source['y'] - 0.5
+            # Coordonnées de départ (bord droit du bloc source)
+            x1 = source['x'] + source['largeur']
+            y1 = source['y'] + source['hauteur'] / 2
             
-            # Coordonnées d'arrivée (haut du bloc cible)
-            x2 = cible['x'] + cible['largeur'] / 2
-            y2 = cible['y'] + cible['hauteur'] + 0.5
+            # Coordonnées d'arrivée (centre du bord gauche du bloc cible)
+            x2 = cible['x']
+            y2 = cible['y'] + cible['hauteur'] / 2
             
             # Dessiner la flèche entre les filières
             ax.annotate(
@@ -449,7 +464,7 @@ class DiagrammeFlux:
                 xytext=(x1, y1),  # Point de départ (bas du bloc source)
                 arrowprops={
                     **style_fleche_eau,
-                    'connectionstyle': 'arc3,rad=0.2',  # Légère courbure
+                    'connectionstyle': 'arc3,rad=0.15',  # Légère courbure
                     'shrinkA': 0,  # Pas de réduction à la source
                     'shrinkB': 0,  # Pas de réduction à la cible
                 },
@@ -458,9 +473,14 @@ class DiagrammeFlux:
         
         # 3. Dessiner les flèches pour les boues (primaire et secondaire)
         if hasattr(self, 'type_station') and hasattr(self, 'filiere_eau'):
+            print(f"\n[DEBUG] Contenu de filiere_eau:")
+            for key, value in self.filiere_eau.items():
+                print(f"  {key}: {value}")
+                
+            # 3.1 Flèches des décanteurs vers l'épaississement
             boues_config = {}
             
-            # Vérifier si on a des configurations de boues dans la filière eau
+            # Récupérer les configurations de boues si elles existent
             if hasattr(self.filiere_eau, 'get'):
                 if 'boues_primaires' in self.filiere_eau:
                     boues_config['boues_primaires'] = self.filiere_eau['boues_primaires']
@@ -477,143 +497,88 @@ class DiagrammeFlux:
                     source = ouvrages_par_nom[source_nom]
                     destination = ouvrages_par_nom[destination_nom]
                     
-                    # Coordonnées de départ (bas du bloc source)
+                    # Coordonnées de départ (centre du bord inférieur du bloc source)
                     x1 = source['x'] + source['largeur'] / 2
-                    y1 = source['y'] - 0.5
+                    y1 = source['y']  # Bord inférieur
                     
                     # Coordonnées d'arrivée (haut du bloc destination)
                     x2 = destination['x'] + destination['largeur'] / 2
-                    y2 = destination['y'] + destination['hauteur'] + 0.5
+                    # Ajuster y2 pour arriver exactement sur le bord supérieur du bloc de destination
+                    y2 = destination['y'] + destination['hauteur']
                     
-                    # Dessiner la flèche courbée en marron
+                    # Dessiner la flèche
                     ax.annotate(
                         "",
-                        xy=(x2, y2),  # Point d'arrivée
-                        xytext=(x1, y1),  # Point de départ
-                        arrowprops={
-                            'arrowstyle': '-|>',
-                            'color': '#8B4513',  # Marron
-                            'linestyle': '--',   # Trait pointillé
-                            'linewidth': 1.5,
-                            'alpha': 0.8,
-                            'shrinkA': 5,
-                            'shrinkB': 5,
-                            'connectionstyle': 'arc3,rad=0.3',  # Courbure de la flèche
-                        },
-                        zorder=1
-                    )
-                    
-                    # Positionner l'étiquette sous l'ouvrage source, décalée vers la gauche
-                    label_x = source['x'] - 1.5  # Décalage vers la gauche
-                    label_y = source['y'] - 0.8  # Position sous l'ouvrage
-                    
-                    # Ajouter une flèche de l'étiquette vers le bas de l'ouvrage source
-                    ax.annotate(
-                        "",
-                        xy=(source['x'] + source['largeur']/2, source['y']),  # Point d'arrivée (bas de l'ouvrage)
-                        xytext=(label_x + 1.0, label_y + 0.3),  # Point de départ (proche de l'étiquette)
-                        arrowprops={
-                            'arrowstyle': '->',
-                            'color': '#8B4513',
-                            'linewidth': 1.0,
-                            'alpha': 0.8,
-                            'shrinkA': 0,
-                            'shrinkB': 5,
-                        },
+                        xy=(x2, y2),
+                        xytext=(x1, y1),
+                        arrowprops=style_fleche_boues,
                         zorder=1
                     )
                     
                     # Ajouter l'étiquette
+                    label_x = source['x'] + source['largeur'] / 2
+                    label_y = source['y'] - 0.8
+                    
                     ax.text(
-                        label_x,
-                        label_y,
+                        label_x, label_y,
                         etiquette,
-                        color='#8B4513',
+                        ha='center', va='top',
                         fontsize=9,
-                        fontweight='bold',
-                        ha='left',
-                        va='top',
                         bbox=dict(
-                            facecolor='white', 
-                            alpha=0.9, 
-                            edgecolor='#8B4513', 
-                            boxstyle='round,pad=0.2',
+                            facecolor='#8B4513',
+                            alpha=0.8,
+                            boxstyle='round,pad=0.3',
+                            edgecolor='#5D2906',
                             linewidth=0.8
                         ),
+                        color='white',
                         zorder=10
                     )
-        
-        # 4. Ajouter l'étiquette "Eaux usées" plus haut au-dessus du premier bloc de prétraitement
-        if 'pretraitement' in ouvrages_par_filiere and ouvrages_par_filiere['pretraitement']:
-            premier_bloc = min(ouvrages_par_filiere['pretraitement'], key=lambda x: x['x'])
-            x = premier_bloc['x'] + premier_bloc['largeur'] / 2
-            y = premier_bloc['y'] + premier_bloc['hauteur'] + 0.8  # Position plus haute
+            # 3.2 Flèches pour la filière boue
+            if hasattr(self, 'filiere_boue') and len(self.filiere_boue) > 1:
+                print(f"\n[DEBUG] Filière boue: {self.filiere_boue}")
+                
+                # Le premier élément est la source (épaississement)
+                source_nom = self.filiere_boue[0]
+                print(f"[DEBUG] Source principale: {source_nom}")
+                
+                if source_nom in ouvrages_par_nom:
+                    source = ouvrages_par_nom[source_nom]
+                    x1 = source['x'] + source['largeur'] / 2
+                    y1 = source['y']  # Bord inférieur
+                    
+                    # Pour chaque destination (sauf la source)
+                    for dest_nom in self.filiere_boue[1:]:
+                        if dest_nom in ouvrages_par_nom:
+                            dest = ouvrages_par_nom[dest_nom]
+                            x2 = dest['x'] + dest['largeur'] / 2
+                            # Ajuster y2 pour arriver exactement sur le bord inférieur du bloc de destination
+                            y2 = dest['y']  # Bord inférieur de la destination
+                            
+                            print(f"[DEBUG] Source: {source_nom} (x1={x1:.2f}, y1={y1:.2f})")
+                            print(f"[DEBUG] Destination: {dest_nom} (x2={x2:.2f}, y2={y2:.2f})")
+                            
+                            # Dessiner la flèche avec une courbure réduite
+                            ax.annotate(
+                                "",
+                                xy=(x2, y2),  # Point d'arrivée exact sur le bord inférieur
+                                xytext=(x1, y1),  # Point de départ (bas du bloc source)
+                                arrowprops={
+                                    'arrowstyle': '->',
+                                    'color': '#8B4513',  # Marron
+                                    'linewidth': 1.5,
+                                    'alpha': 0.8,
+                                    'shrinkA': 0,  # Pas de réduction au point de départ
+                                    'shrinkB': 0,  # Pas de réduction au point d'arrivée
+                                    'connectionstyle': 'arc3,rad=0.15'  # Courbure très réduite (0.1 au lieu de 0.2)
+                                },
+                                zorder=1
+                            )
+                else:
+                    print(f"[DEBUG] Erreur: {source_nom} non trouvé dans ouvrages_par_nom")
+            else:
+                print("[DEBUG] Moins de 2 ouvrages dans la filière boue")        
             
-            # Flèche plus longue pointant vers le bas depuis l'ouvrage source
-            ax.annotate(
-                "",
-                xy=(x, premier_bloc['y'] + premier_bloc['hauteur']),  # Point d'arrivée (haut du bloc)
-                xytext=(x, y),  # Point de départ (au niveau du texte)
-                arrowprops={
-                    'arrowstyle': '-|>',
-                    'color': '#3498db',  # Bleu
-                    'linestyle': '-',
-                    'linewidth': 1.5,
-                    'alpha': 0.9,
-                    'shrinkA': 0,
-                    'shrinkB': 0,
-                },
-                zorder=1
-            )
-            
-            # Texte "Eaux usées" plus haut
-            ax.text(
-                x, y + 0.3, 'Eaux usées',  # Déplacé plus haut avec +0.3
-                color='#3498db',
-                fontsize=8,
-                ha='center',
-                va='bottom',
-                bbox=dict(facecolor='white', alpha=0.7, edgecolor='none', boxstyle='round,pad=0.2')
-            )
-        
-        # 5. Ajouter l'étiquette "Eaux épurées" sur le côté droit du dernier bloc du traitement secondaire
-        if 'traitement_secondaire' in ouvrages_par_filiere and ouvrages_par_filiere['traitement_secondaire']:
-            dernier_bloc = max(ouvrages_par_filiere['traitement_secondaire'], key=lambda x: x['x'])
-            
-            # Coordonnées de la flèche
-            x = dernier_bloc['x'] + dernier_bloc['largeur'] + 1.0  # Augmenté pour allonger la flèche
-            y = dernier_bloc['y'] + dernier_bloc['hauteur'] / 2
-            
-            # Flèche horizontale plus longue partant du bloc vers la droite
-            ax.annotate(
-                "",
-                xy=(x - 0.3, y),  # Point d'arrivée (juste avant le texte)
-                xytext=(dernier_bloc['x'] + dernier_bloc['largeur'], y),  # Point de départ (bord droit du bloc)
-                arrowprops={
-                    'arrowstyle': '-|>',
-                    'color': '#3498db',  # Bleu
-                    'linestyle': '-',
-                    'linewidth': 1.5,
-                    'alpha': 0.9,
-                    'shrinkA': 0,
-                    'shrinkB': 0,
-                },
-                zorder=1
-            )
-            
-            # Texte "Eaux épurées" à droite de la flèche
-            ax.text(
-                x, y, 'Eaux épurées',
-                color='#3498db',
-                fontsize=8,
-                ha='left',
-                va='center',
-                bbox=dict(facecolor='white', alpha=0.7, edgecolor='none', boxstyle='round,pad=0.2')
-            )
-        
-        # Le reste de la méthode reste inchangé...
-        # (conserver le code existant pour les boues, les étiquettes, etc.)
-    
     def _formater_nom_ouvrage(self, nom: str) -> str:
         """
         Formate le nom d'un ouvrage pour un affichage optimal sur plusieurs lignes.
@@ -650,13 +615,14 @@ class DiagrammeFlux:
         
         return '\n'.join(lignes)
     
-    def generer_diagramme(self, liste_ouvrages: list, titre: str):
+    def generer_diagramme(self, liste_ouvrages: list, titre: str, destination: str = None):
         """
         Génère le diagramme de flux avec les ouvrages donnés.
         
         Args:
-            liste_ouvrages: Liste des ouvrages formatés
-            titre: Titre du diagramme (déjà formaté)
+            liste_ouvrages: Liste des ouvrages à afficher
+            titre: Titre du diagramme (déjà formaté avec la date)
+            destination: Destination finale des eaux épurées (ex: "Rejet", "Réutilisation") (optionnel)
         """
         # Fermer toutes les figures existantes pour éviter les figures indésirées
         plt.close('all')
@@ -670,11 +636,14 @@ class DiagrammeFlux:
         ouvrages_positionnes = self.calculer_positions(filieres)
         
         # Créer et afficher le diagramme
-        fig, ax = self.dessiner_diagramme(ouvrages_positionnes)
+        fig, ax = self.dessiner_diagramme(ouvrages_positionnes, destination)
+        
+        # Diviser le titre en lignes pour un meilleur affichage
+        lignes_titre = titre.split('\n')
         
         # Ajouter le titre principal avec un espacement amélioré
         plt.suptitle(
-            titre,
+            '\n'.join(lignes_titre),
             fontsize=14,
             fontweight='bold',
             y=0.99,  # Ajuster légèrement vers le haut
@@ -690,12 +659,13 @@ class DiagrammeFlux:
         plt.tight_layout(rect=[0, 0, 1, 0.95])  # Réserver de l'espace pour le titre
         plt.show()
     
-    def dessiner_diagramme(self, ouvrages_positionnes: list):
+    def dessiner_diagramme(self, ouvrages_positionnes: list, destination: str = None):
         """
         Dessine le diagramme de flux avec les ouvrages positionnés.
         
         Args:
             ouvrages_positionnes: Liste des ouvrages avec leurs positions
+            destination: Destination finale des eaux épurées (optionnel)
             
         Returns:
             tuple: Figure et axes matplotlib
@@ -764,6 +734,105 @@ class DiagrammeFlux:
         # Dessiner les flèches entre les ouvrages
         self.dessiner_fleches(ax, ouvrages_positionnes)
         
+        # Trier les ouvrages par position x pour déterminer le premier et le dernier
+        ouvrages_tries = sorted(ouvrages_positionnes, key=lambda o: o['x'])
+        
+        if ouvrages_tries:
+            # Ajouter 'Eaux usées' au-dessus du premier ouvrage
+            premier_ouvrage = ouvrages_tries[0]
+            x_label = premier_ouvrage['x'] + premier_ouvrage['largeur']/2
+            y_label = premier_ouvrage['y'] + premier_ouvrage['hauteur'] + 2.0
+            
+            # Flèche verticale vers le bas
+            ax.annotate(
+                "",
+                xy=(x_label, premier_ouvrage['y'] + premier_ouvrage['hauteur'] + 0.1),
+                xytext=(x_label, y_label - 0.5),
+                arrowprops=dict(arrowstyle='->', color='black', lw=1.5, shrinkA=0, shrinkB=0),
+                zorder=1
+            )
+            
+            # Étiquette 'Eaux usées'
+            ax.text(
+                x_label, y_label,
+                'Eaux usées',
+                ha='center',
+                va='bottom',
+                fontsize=10,
+                fontweight='bold',
+                color='black',
+                bbox=dict(facecolor='white', alpha=0.0, boxstyle='round,pad=0.5', linewidth=0)
+            )
+            
+            # Trouver le dernier ouvrage du traitement secondaire
+            dernier_ouvrage_secondaire = None
+            for ouvrage in reversed(ouvrages_tries):
+                if any(nom in ouvrage['nom'] for nom in ['Décanteur secondaire', 'Clarificateur', 'Bassin aération']):
+                    dernier_ouvrage_secondaire = ouvrage
+                    break
+            
+            # Si on a trouvé un ouvrage du traitement secondaire, on l'utilise
+            # Sinon, on prend le dernier ouvrage
+            dernier_ouvrage = dernier_ouvrage_secondaire if dernier_ouvrage_secondaire else ouvrages_tries[-1]
+            
+            # Ajouter 'Eaux épurées' après le dernier ouvrage
+            x_label = dernier_ouvrage['x'] + dernier_ouvrage['largeur'] + 3.0  # Augmenté de 2.0 à 5.0 pour correspondre aux 'Eaux usées'
+            y_label = dernier_ouvrage['y'] + dernier_ouvrage['hauteur']/2
+            
+            # Flèche horizontale vers la droite
+            ax.annotate(
+                "",
+                xy=(x_label - 1.5, y_label),
+                xytext=(dernier_ouvrage['x'] + dernier_ouvrage['largeur'] + 0.1, y_label),
+                arrowprops=dict(arrowstyle='->', color='blue', lw=1.5, shrinkA=0, shrinkB=0),
+                zorder=1
+            )
+            
+        # Styles pour les différentes destinations
+        styles_destination = {
+            'Rejet': {'color': '#1f77b4', 'icon': '🌊', 'style': 'normal'},  # Bleu avec icône vague
+            'Réutilisation': {'color': '#2ca02c', 'icon': '♻️', 'style': 'italic'},  # Vert avec icône recyclage
+            'Irrigation': {'color': '#8c564b', 'icon': '🌱', 'style': 'normal'},  # Marron avec icône plante
+        }
+
+        # Déterminer le style à utiliser
+        style = styles_destination.get(destination, {'color': '#666666', 'icon': '➡️', 'style': 'normal'})
+
+        # Afficher l'étiquette 'Eaux épurées'
+        ax.text(
+            x_label - 1, y_label,
+            'Eaux épurées',
+            ha='left',
+            va='center',
+            fontsize=10,
+            fontweight='bold',
+            color='blue',
+            bbox=dict(facecolor='white', alpha=0.8, edgecolor='none', pad=2.0),
+            zorder=5
+        )
+
+        # Afficher la destination avec style
+        if destination:
+            ax.text(
+                x_label + 2.5,  # Décalé à droite de 'Eaux épurées'
+                y_label,
+                f"{style['icon']} {destination}",
+                ha='left',
+                va='center',
+                fontsize=10,
+                fontweight='bold',
+                color=style['color'],
+                fontstyle=style['style'],
+                bbox=dict(
+                    facecolor='white',
+                    alpha=0.9,
+                    edgecolor=style['color'],
+                    boxstyle='round,pad=0.3',
+                    linewidth=1
+                ),
+                zorder=5
+            )    
+        
         # Ajouter la légende
         self.ajouter_legende(ax)
         
@@ -812,6 +881,16 @@ class DiagrammeFlux:
                 [0], [0],
                 marker='s',
                 color='w',
+                label='En dysfonctionnement',
+                markerfacecolor=self.couleurs_etats['en_dysfonctionnement'],
+                markersize=12,
+                markeredgecolor='#333333',
+                markeredgewidth=1
+            ),
+            plt.Line2D(
+                [0], [0],
+                marker='s',
+                color='w',
                 label='En maintenance',
                 markerfacecolor=self.couleurs_etats['en_maintenance'],
                 markersize=12,
@@ -842,8 +921,28 @@ class DiagrammeFlux:
                 [0], [0],
                 marker='s',
                 color='w',
-                label='Nouvel équipement',
-                markerfacecolor=self.couleurs_etats['Nouvel équipement'],
+                label='Arrêt volontaire',
+                markerfacecolor=self.couleurs_etats['arret_volontaire'],
+                markersize=12,
+                markeredgecolor='#333333',
+                markeredgewidth=1
+            ),
+            plt.Line2D(
+                [0], [0],
+                marker='s',
+                color='w',
+                label='Surchargé / Saturé',
+                markerfacecolor=self.couleurs_etats['surcharge_sature'],
+                markersize=12,
+                markeredgecolor='#333333',
+                markeredgewidth=1
+            ),
+            plt.Line2D(
+                [0], [0],
+                marker='s',
+                color='w',
+                label='Nouvel ouvrage',
+                markerfacecolor=self.couleurs_etats['nouvel_ouvrage'],
                 markersize=12,
                 markeredgecolor='#333333',
                 markeredgewidth=1
@@ -854,14 +953,14 @@ class DiagrammeFlux:
         legend_elements.extend([
             plt.Line2D(
                 [0], [0],
-                color='#3498db',
+                color='#3498db',  # Bleu
                 lw=2,
                 label='Filière Eau',
                 linestyle='-'
             ),
             plt.Line2D(
                 [0], [0],
-                color='#8B4513',
+                color='#8B4513',  # Marron
                 lw=2,
                 label='Filière Boues',
                 linestyle='--'
@@ -926,10 +1025,14 @@ def get_station_etat(station_id, station_nom=None):
             return None, None
             
         with open('data/etat_station.json', 'r', encoding='utf-8') as f:
-            etats = json.load(f)
-            
-        # Recherche des états pour cette station
-        etats_station = [e for e in etats if e.get('station_id') == station_id]
+            etats_data = json.load(f)
+
+        if not isinstance(etats_data, dict):
+            log.error("Le fichier etat_station.json n'est pas un dictionnaire.")
+            return None, None
+
+        # Récupérer les états pour la station spécifiée
+        etats_station = etats_data.get(station_id, [])
         
         if not etats_station:
             log.warning(f"Aucun état trouvé pour la station {station_nom or station_id}")
@@ -938,11 +1041,53 @@ def get_station_etat(station_id, station_nom=None):
         # Trier par date (la plus récente en premier)
         etats_station.sort(key=lambda x: x.get('date_maj', x.get('date', '')), reverse=True)
         
-        return etats_station[0].get('etat_ouvrages', {}), etats_station[0].get('date_maj')
+        dernier_etat = etats_station[0]
+        return dernier_etat.get('etat_ouvrages', {}), dernier_etat.get('date_maj')
         
     except Exception as e:
         log.error(f"Erreur lors de la récupération de l'état de la station: {e}")
         return None, None
+
+def get_toutes_les_mises_a_jour(station_id):
+    """
+    Récupère toutes les mises à jour disponibles pour une station donnée.
+    
+    Args:
+        station_id (str): ID de la station
+        
+    Returns:
+        list: Liste des mises à jour triées par date (la plus récente en premier)
+    """
+    try:
+        with open('data/etat_station.json', 'r', encoding='utf-8') as f:
+            etats_data = json.load(f)
+
+        if not isinstance(etats_data, dict):
+            log.error("Le fichier etat_station.json n'est pas un dictionnaire.")
+            return []
+            
+        # Récupérer les mises à jour pour la station spécifiée
+        mises_a_jour = etats_data.get(station_id, [])
+        
+        # S'assurer que c'est toujours une liste
+        if isinstance(mises_a_jour, dict):
+            mises_a_jour = [mises_a_jour]
+
+        # Trier par date (la plus récente en premier)
+        if mises_a_jour:
+            mises_a_jour.sort(key=lambda x: x.get('date_maj', ''), reverse=True)
+        
+        return mises_a_jour
+        
+    except FileNotFoundError:
+        log.error("Fichier etat_station.json introuvable")
+        return []
+    except json.JSONDecodeError:
+        log.error("Erreur de lecture du fichier etat_station.json")
+        return []
+    except Exception as e:
+        log.error(f"Erreur lors de la récupération des mises à jour: {e}")
+        return []
 
 def select_station_interactive():
     """Permet à l'utilisateur de sélectionner une station de manière interactive."""
@@ -975,123 +1120,125 @@ def select_station_interactive():
 
 def generer_diagramme_station():
     """Fonction principale pour générer le diagramme d'une station sélectionnée."""
-    print("\n=== Générateur de diagramme de flux des stations d'épuration ===")
-    
     try:
-        # Sélection de la station
+        # Sélectionner une station de manière interactive
         station = select_station_interactive()
         if not station:
-            log.info("Aucune station sélectionnée. Retour au menu principal.")
+            print("\033[1;33m❌ Aucune station sélectionnée. Retour au menu principal.\033[0m")
             return
+
+        # Récupérer les informations de la station
+        nom_station = station.get('nom', 'Station inconnue')
+        type_procede = station.get('type_procede', 'Inconnu')
         
-        print(f"\nStation sélectionnée : {station.get('nom')}")
+        # Afficher l'en-tête
+        print(f"\n\033[1;34mGÉNÉRATION DU DIAGRAMME\033[0m")
+        print("-" * 40)
+        print(f"Station: {nom_station}")
+        print(f"Type de procédé: {type_procede}")
         
-        # Récupérer le type de procédé de la station
-        type_procede = station.get('type_procede', 'boues_activées')
-        
-        # Initialiser le diagramme avec le type de procédé
-        diagramme = DiagrammeFlux(type_station=type_procede)
+        # Vérifier si le type de procédé est valide
+        if not type_procede or type_procede == 'Inconnu':
+            raise ValueError("Le type de procédé n'est pas défini pour cette station.")
         
         # Récupérer toutes les mises à jour disponibles pour cette station
-        try:
-            with open('data/etat_station.json', 'r', encoding='utf-8') as f:
-                etats = json.load(f)
-                mises_a_jour = [e for e in etats if e.get('station_id') == station['id']]
-                
-                if not mises_a_jour:
-                    log.error("Aucune mise à jour trouvée pour cette station.")
-                    return
-                    
-                # Trier les mises à jour par date (la plus récente en premier)
-                mises_a_jour.sort(key=lambda x: x.get('date_maj', x.get('date', '')), reverse=True)
-                
-                # Si une seule mise à jour, on l'utilise directement
-                if len(mises_a_jour) == 1:
-                    etat_equipements = mises_a_jour[0].get('etat_ouvrages', {})
-                    date_maj = mises_a_jour[0].get('date_maj', 'Date inconnue')
-                    print(f"\nUne seule mise à jour disponible : {date_maj}")
-                else:
-                    # Afficher la liste des mises à jour disponibles
-                    print("\nPlusieurs mises à jour sont disponibles pour cette station :")
-                    for i, maj in enumerate(mises_a_jour, 1):
-                        date_maj = maj.get('date_maj', 'Date inconnue')
-                        print(f"{i}. {date_maj}")
-                    
-                    # Demander à l'utilisateur de choisir
-                    while True:
-                        try:
-                            choix = input("\nEntrez le numéro de la mise à jour à visualiser (ou 'q' pour quitter) : ")
-                            if choix.lower() == 'q':
-                                return
-                            choix_idx = int(choix) - 1
-                            if 0 <= choix_idx < len(mises_a_jour):
-                                break
-                            print("Numéro invalide. Veuillez réessayer.")
-                        except ValueError:
-                            print("Veuillez entrer un numéro valide.")
-                    
-                    etat_equipements = mises_a_jour[choix_idx].get('etat_ouvrages', {})
-                    date_maj = mises_a_jour[choix_idx].get('date_maj', 'Date inconnue')
-                    print(f"\nMise à jour sélectionnée : {date_maj}")
-                    
-                if not etat_equipements:
-                    log.error("Aucun équipement trouvé pour cette mise à jour.")
-                    return
-                
-                # Formater la date pour l'affichage
-                date_formatee = date_maj  # Par défaut, utiliser la date telle quelle
-                try:
-                    # Essayer de parser la date avec le format complet (avec l'heure)
-                    if ' ' in date_maj:
-                        dt = datetime.strptime(date_maj, '%Y-%m-%d %H:%M:%S')
-                        date_formatee = dt.strftime('%d/%m/%Y')
-                    # Essayer avec juste la date
-                    else:
-                        dt = datetime.strptime(date_maj, '%Y-%m-%d')
-                        date_formatee = dt.strftime('%d/%m/%Y')
-                except (ValueError, AttributeError) as e:
-                    log.warning(f"Format de date non reconnu : {date_maj}. Utilisation de la date brute. Erreur : {e}")
-                
-                # Préparer la liste des ouvrages formatée avec l'ID de la station
-                print("\nPréparation du diagramme...")
-                liste_ouvrages = []
-                for i, (nom_ouvrage, etat) in enumerate(etat_equipements.items(), 1):
-                    # Créer un dictionnaire pour chaque ouvrage avec les champs requis
-                    ouvrage = {
-                        'id': i,
-                        'nom': nom_ouvrage,
-                        'etat': etat,
-                        'etat_affiche': etat.replace('_', ' ').capitalize() if etat in ['en_service', 'en_panne', 'en_maintenance', 'hors_service', 'inexistant'] else etat,
-                        'station_id': station['id']
-                    }
-                    liste_ouvrages.append(ouvrage)
-                
-                # Générer le diagramme
-                try:
-                    print("Génération du diagramme en cours...")
-                    
-                    # Créer le titre formaté avec la date formatée
-                    nom_station = f"STEP {station.get('nom', 'inconnue')}"
-                    type_procede_affichage = type_procede.replace('_', ' ').upper()
-                    titre_complet = f"{nom_station} - {type_procede_affichage}\nDernière mise à jour : {date_formatee}"
-                    
-                    # Générer et afficher le diagramme
-                    diagramme.generer_diagramme(liste_ouvrages, titre_complet)
-                    print("\nDiagramme généré avec succès !")
-                    
-                except Exception as e:
-                    log.error(f"Erreur lors de la génération du diagramme : {e}")
-                    import traceback
-                    traceback.print_exc()
-                    
-        except FileNotFoundError:
-            log.error("Le fichier des états des stations est introuvable.")
-        except json.JSONDecodeError:
-            log.error("Erreur de lecture du fichier JSON des états des stations.")
+        mises_a_jour = get_toutes_les_mises_a_jour(station['id'])
+        
+        if not mises_a_jour:
+            print("\033[1;33m⚠️  Aucune mise à jour trouvée pour cette station.\033[0m")
+            return
+        
+        # Si une seule mise à jour, on l'utilise directement
+        if len(mises_a_jour) == 1:
+            etat_ouvrages = mises_a_jour[0].get('etat_ouvrages', {})
+            date_maj = mises_a_jour[0].get('date_maj', 'Date inconnue')
+        else:
+            # Afficher la liste des mises à jour disponibles
+            print("\n\033[1mMises à jour disponibles :\033[0m")
+            for i, maj in enumerate(mises_a_jour, 1):
+                date_maj = maj.get('date_maj', 'Date inconnue')
+                print(f"{i}. {date_maj}")
             
+            # Demander à l'utilisateur de choisir
+            while True:
+                try:
+                    choix = input("\nEntrez le numéro de la mise à jour à afficher (ou 'q' pour quitter) : ").strip()
+                    if choix.lower() == 'q':
+                        return
+                    
+                    choix = int(choix) - 1
+                    if 0 <= choix < len(mises_a_jour):
+                        break
+                        
+                    print("\033[1;31m❌ Numéro invalide. Veuillez réessayer.\033[0m")
+                except ValueError:
+                    print("\033[1;31m❌ Veuillez entrer un numéro valide.\033[0m")
+            
+            etat_ouvrages = mises_a_jour[choix].get('etat_ouvrages', {})
+            date_maj = mises_a_jour[choix].get('date_maj', 'Date inconnue')
+        
+        # Récupérer la liste des ouvrages pour ce type de procédé
+        try:
+            # Charger les données des types de procédés
+            with open('data/types.json', 'r', encoding='utf-8') as f:
+                types_data = json.load(f)
+            
+            # Récupérer les ouvrages sous forme de dictionnaire d'états
+            etats_ouvrages = get_ouvrages_procede(type_procede, types_data)
+            if not etats_ouvrages:
+                raise ValueError(f"Aucun ouvrage trouvé pour le type de procédé: {type_procede}")
+            
+            # Mettre à jour les états avec les valeurs actuelles
+            for nom_ouvrage, etat in etat_ouvrages.items():
+                if nom_ouvrage in etats_ouvrages:
+                    etats_ouvrages[nom_ouvrage] = etat
+            
+            # Convertir le dictionnaire d'états en liste d'ouvrages formatée
+            ouvrages = [{
+                'id': i + 1,
+                'nom': nom,
+                'etat': etat,
+                'etat_affiche': etat.replace('_', ' ').capitalize() if etat in ['en_service', 'en_panne', 'en_maintenance', 'hors_service', 'inexistant'] else etat
+            } for i, (nom, etat) in enumerate(etats_ouvrages.items())]
+            
+        except Exception as e:
+            raise Exception(f"Erreur lors de la récupération des ouvrages: {str(e)}")
+        
+        # Créer le titre du diagramme avec la date de mise à jour
+        type_procede_formate = type_procede.replace('_', ' ').upper()
+        
+        # Formater la date pour l'affichage
+        if date_maj and date_maj != "Date inconnue":
+            try:
+                # Extraire la date du format "YYYY-MM-DD HH:MM:SS"
+                date_part = date_maj.split(' ')[0]  # Prendre uniquement la partie date
+                date_obj = datetime.strptime(date_part, '%Y-%m-%d')
+                date_formatee = date_obj.strftime('%d/%m/%Y')
+                
+                # Créer le titre avec la date formatée
+                titre = f"STEP {nom_station} | Type de procédé : {type_procede_formate}\nMise à jour du {date_formatee}"
+                print(f"[DEBUG] Date formatée pour le titre : {date_formatee}")
+            except Exception as e:
+                print(f"\033[1;33m⚠️  Erreur de format de date: {e}. Utilisation de la date brute: {date_maj}\033[0m")
+                titre = f"STEP {nom_station} | Type de procédé : {type_procede_formate}\nMise à jour du {date_maj}"
+        else:
+            titre = f"STEP {nom_station} | Type de procédé : {type_procede_formate}\nDate de mise à jour inconnue"
+        
+        print(f"[DEBUG] Titre complet : {titre}")
+        
+        # Créer une instance du diagramme et générer le diagramme
+        try:
+            diagramme = DiagrammeFlux(type_station=type_procede)
+            diagramme.generer_diagramme(ouvrages, titre, destination="Rejet")
+            print("\n\033[1;32m✅ Diagramme généré avec succès !\033[0m")
+        except Exception as e:
+            raise Exception(f"Erreur lors de la génération du diagramme: {str(e)}")
+        
+    except KeyboardInterrupt:
+        print("\n\033[1;33m❌ Opération annulée par l'utilisateur.\033[0m")
     except Exception as e:
-        log.error(f"Une erreur inattendue est survenue : {e}")
+        print(f"\n\033[1;31m❌ Erreur: {str(e)}\033[0m")
         import traceback
         traceback.print_exc()
     
-    #input("\nAppuyez sur Entrée pour continuer...")
+    input("\nAppuyez sur Entrée pour continuer...")

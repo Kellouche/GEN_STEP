@@ -152,5 +152,42 @@ def get_station_by_id(station_id: str) -> Optional[Dict[str, Any]]:
             return station
     return None
 
+def charger_etats_station() -> Dict[str, Any]:
+    """
+    Charge l'état des stations depuis le fichier JSON.
+    Retourne un dictionnaire vide en cas d'erreur ou si le fichier n'existe pas.
+    """
+    try:
+        if not os.path.exists('data/etat_station.json'):
+            return {}
+        with open('data/etat_station.json', 'r', encoding='utf-8') as f:
+            etats_data = json.load(f)
+        if not isinstance(etats_data, dict):
+            log.warning("Le fichier etat_station.json ne contient pas un dictionnaire. Réinitialisation.")
+            return {}
+        return etats_data
+    except (json.JSONDecodeError, FileNotFoundError) as e:
+        log.error(f"Erreur lors du chargement de etat_station.json: {e}")
+        return {}
+
+def sauvegarder_etats_station(etats_data: Dict[str, Any]) -> bool:
+    """
+    Sauvegarde l'état des stations dans le fichier JSON.
+    
+    Args:
+        etats_data: Dictionnaire contenant les états des stations.
+        
+    Returns:
+        True si la sauvegarde a réussi, False sinon.
+    """
+    try:
+        os.makedirs('data', exist_ok=True)
+        with open('data/etat_station.json', 'w', encoding='utf-8') as f:
+            json.dump(etats_data, f, ensure_ascii=False, indent=2)
+        return True
+    except Exception as e:
+        log.error(f"Erreur lors de la sauvegarde de etat_station.json: {e}")
+        return False
+
 # Initialisation de la configuration des logs au chargement du module
 configurer_journal()

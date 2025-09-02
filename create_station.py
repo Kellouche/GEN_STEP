@@ -155,29 +155,37 @@ def customiser_ouvrages(etats_ouvrages):
     ouvrages = list(etats_ouvrages.items())
     
     for i, (nom, etat) in enumerate(ouvrages, 1):
-        print(f"\n--- Ouvrage {i}: {nom} (État actuel: {etat}) ---")
-        print("1. En service")
-        print("2. En panne")
-        print("3. En maintenance")
-        print("4. Hors service")
-        print("5. Inexistant")
-        print("6. Passer au suivant")
+        print(f"\n\033[1m--- Ouvrage {i}: {nom} (État actuel: {etat}) ---\033[0m")
+        print("1. ✅  En service (rendement conforme)")
+        print("2. ❌  En panne (arrêt total)")
+        print("3. ⚠️  En dysfonctionnement (fonctionnement dégradé)")
+        print("4. 🔧  En maintenance (entretien/réparation)")
+        print("5. 🚫  Hors service (non exploité)")
+        print("6. ❓  Inexistant (non construit)")
+        print("7. ⏸️  À l’arrêt volontaire (arrêt choisi)")
+        print("8. 📈  Surchargé / Saturé (au-delà capacité)")
+        print("9. ✨  Nouvel ouvrage (construit nouvellement)")
+        print("10. ➡️  Passer au suivant")
         
         while True:
-            choix = input("\nVotre choix (1-6): ").strip()
+            choix = input("\nVotre choix (1-10): ").strip()
             if not choix:  # Si l'utilisateur appuie juste sur Entrée
                 print("Veuillez sélectionner une option valide.")
                 continue
                 
-            if choix == '6':
+            if choix == '10':
                 break  # Passer à l'ouvrage suivant
                 
             etats = {
                 '1': 'en_service',
                 '2': 'en_panne',
-                '3': 'en_maintenance',
-                '4': 'hors_service',
-                '5': 'inexistant'
+                '3': 'en_dysfonctionnement',
+                '4': 'en_maintenance',
+                '5': 'hors_service',
+                '6': 'inexistant',
+                '7': 'arret_volontaire',
+                '8': 'surcharge_sature',
+                '9': 'nouvel_ouvrage'
             }
             
             if choix in etats:
@@ -218,7 +226,7 @@ def creation_type_procede_section(types_dict):
     # Affiche les procédés disponibles avec noms formatés
     for i, (key, proc_data) in enumerate(procedure_list, 1):
         display_name = proc_data.get('display_name', formater_nom_procede(key))
-        print(f"{i}. {display_name}")
+        print(f"{i}. {display_name.upper()}")
     
     while True:
         choice, cmd = get_input("\nChoisissez un type de procédé (numéro)")
@@ -332,7 +340,7 @@ def create_station():
         
         # 5. Récupère la destination
         print("\nDestinations possibles :")
-        destinations = ["Irrigation", "Rejet", "Réutilisation", "Autre"]
+        destinations = ["Milieu naturel", "Irrigation agricole", "Irrigation des espaces verts", "Industrie", "Autre"]
         for i, dest in enumerate(destinations, 1):
             print(f"{i}. {dest}")
             
@@ -394,11 +402,13 @@ def create_station():
             save_json("data/stations.json", stations)
             
             # Enregistre l'état initial
-            etats = load_json("data/etat_station.json")
-            if not isinstance(etats, list):
-                etats = []
-            etats.append(etat_data)
-            save_json("data/etat_station.json", etats)
+            etats_data = load_json("data/etat_station.json")
+            if not isinstance(etats_data, dict):
+                etats_data = {}
+            
+            # L'état initial est un dictionnaire
+            etats_data[station_id] = etat_data
+            save_json("data/etat_station.json", etats_data)
             
             log_info(f"Station '{data['nom']}' créée avec succès!")
             log_info(f"ID de la station: {station_id}")

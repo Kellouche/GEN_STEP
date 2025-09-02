@@ -1317,17 +1317,108 @@ def draw_schema(station, date):
                             source_prim_clean = source_prim.replace("/", "").strip()
                             
                             if source_prim_clean == nom_brut:
-                                # Afficher au-dessus de la source des boues primaires
-                                y_pos = b["y"] + b["h"] + 0.3
-                                #ax.text(b["x"] + b["w"]/2,
-                                       #y_pos,
-                                       #boues_prim["etiquette"],
-                                       #ha='center', va='bottom',
-                                       #fontsize=10, fontweight='bold',
-                                       #color=colors["fleche_boue"],
-                                       #bbox=dict(facecolor='white', alpha=0.8, edgecolor='none', boxstyle='round,pad=0.3'))
+                                # Afficher sous l'ouvrage source avec une flèche
+                                x_pos = b["x"] + b["w"] / 2
+                                y_pos = b["y"] - 0.5  # Position sous l'ouvrage
+                                
+                                # Dessiner la flèche verticale
+                                #ax.annotate(
+                                    #"",
+                                    #xy=(x_pos, y_pos - 0.2),  # Pointe de la flèche
+                                    #xytext=(x_pos, y_pos + 0.1),  # Début de la flèche
+                                    #arrowprops=dict(
+                                        #arrowstyle="-|>",
+                                        #color="#8B4513",  # Marron
+                                        #lw=1.5,
+                                        #shrinkA=0,
+                                        #shrinkB=0
+                                    #),
+                                    #zorder=1
+                                #)
+                                
+                                # Afficher l'étiquette avec fond marron transparent
+                                #ax.text(
+                                    #x_pos,
+                                    #y_pos - 0.5,  # Position sous la flèche
+                                    #boues_prim["etiquette"],
+                                    #ha='center',
+                                    #va='top',
+                                    #fontsize=10,
+                                    #fontweight='normal',
+                                    #color='white',
+                                    #bbox=dict(
+                                        #facecolor='#8B4513',  # Marron
+                                        #alpha=0.8,  # Transparence
+                                        #edgecolor='#5D2906',  # Marron plus foncé pour la bordure
+                                        #boxstyle='round,pad=0.3',
+                                        #linewidth=0.5
+                                    #)
+                                #)
                                 break
                         except Exception as e:
                             log_avertissement(f"Erreur lors du traitement du bloc primaire {b}: {str(e)}")
                 except Exception as e:
                     log_avertissement(f"Erreur lors du traitement des boues primaires: {str(e)}")
+        
+        # Afficher les boues secondaires si configuré
+        if "boues_secondaires" in filiere_eau and filiere_eau["boues_secondaires"]:
+            boues_sec = filiere_eau["boues_secondaires"]
+            if isinstance(boues_sec, dict) and "source" in boues_sec and "etiquette" in boues_sec:
+                try:
+                    source_sec = str(boues_sec["source"])
+                    # Rechercher le bloc correspondant en tenant compte des sauts de ligne
+                    for b in blocs:
+                        if not isinstance(b, dict):
+                            continue
+                            
+                        nom_bloc = b.get("nom")
+                        if not isinstance(nom_bloc, str):
+                            continue
+                            
+                        try:
+                            nom_brut = nom_bloc.replace("\n", "").strip()
+                            source_sec_clean = source_sec.replace("/", "").strip()
+                            
+                            if source_sec_clean == nom_brut:
+                                # Afficher sous l'ouvrage source avec une flèche
+                                x_pos = b["x"] + b["w"] / 2
+                                y_pos = b["y"] - 0.5  # Position sous l'ouvrage
+                                
+                                # Dessiner la flèche verticale
+                                #ax.annotate(
+                                    #"",
+                                    #xy=(x_pos, y_pos - 0.2),  # Pointe de la flèche
+                                    #xytext=(x_pos, y_pos + 0.1),  # Début de la flèche
+                                    #arrowprops=dict(
+                                        #arrowstyle="-|>",
+                                        #color="#8B4513",  # Marron
+                                        #lw=1.5,
+                                        #shrinkA=0,
+                                        #shrinkB=0
+                                    #),
+                                    #zorder=1
+                                #)
+                                
+                                # Afficher l'étiquette avec fond marron transparent
+                                #ax.text(
+                                    #x_pos,
+                                    #y_pos - 0.5,  # Position sous la flèche
+                                    #boues_sec["etiquette"],
+                                    #ha='center',
+                                    #va='top',
+                                    #fontsize=10,
+                                    #fontweight='normal',
+                                    #color='white',
+                                    #bbox=dict(
+                                        #facecolor='#8B4513',  # Marron
+                                        #alpha=0.8,  # Transparence
+                                        #edgecolor='#5D2906',  # Marron plus foncé pour la bordure
+                                        #boxstyle='round,pad=0.3',
+                                        #linewidth=0.5
+                                    #)
+                                #)
+                                break
+                        except Exception as e:
+                            log_avertissement(f"Erreur lors du traitement du bloc secondaire {b}: {str(e)}")
+                except Exception as e:
+                    log_avertissement(f"Erreur lors du traitement des boues secondaires: {str(e)}")

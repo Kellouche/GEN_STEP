@@ -1,85 +1,53 @@
-[
-  {
-    "station_id": "0a52d6b4-e2cc-4349-a299-a4d1b4fa9a67",
-    "date": "2025-08-27",
-    "etat_ouvrages": {
-        "Dégrillage": "en_maintenance",
-        "Dessablage/Dégraissage": "en_maintenance",
+{
+  "d7be6b39-2a59-4f23-871a-f74a5f924918": [
+    {
+      "date": "2025-09-01",
+      "date_maj": "2025-09-01 15:06:57",
+      "etat_ouvrages": {
+        "Bassins d'aération": "en_dysfonctionnement",
+        "Dessablage/Dégraissage": "en_panne",
         "Décanteur primaire": "inexistant",
-        "Bassins d'aération": "en_panne",
-        "Décanteur secondaire": "en_service",
-        "Filtration sur sable": "inexistant",
-        "Désinfection UV": "inexistant",
-        "Épaississement des boues": "en_panne",
+        "Décanteur secondaire": "en_dysfonctionnement",
+        "Dégrillage": "en_dysfonctionnement",
         "Déshydratation mécanique": "inexistant",
-        "Lits de séchage": "en_service"
-    },
-    "date_maj": "2025-08-28 09:55:25"
-},
-    {
-        "station_id": "0a52d6b4-e2cc-4349-a299-a4d1b4fa9a67",
-        "date": "2025-08-27",
-        "etat_ouvrages": {
-            "Dégrillage": "en_maintenance",
-            "Dessablage/Dégraissage": "hors_service",
-            "Décanteur primaire": "inexistant",
-            "Bassins d'aération": "en_service",
-            "Décanteur secondaire": "en_service",
-            "Filtration sur sable": "inexistant",
-            "Désinfection UV": "inexistant",
-            "Épaississement des boues": "en_panne",
-            "Déshydratation mécanique": "inexistant",
-            "Lits de séchage": "en_service"
-        },
-        "date_maj": "2025-08-31 11:55:25"
-    },
-    {
-        "station_id": "5a84eb5c-05fe-47d3-b9dd-b72445b040dc",
-        "date": "2025-08-28",
-        "etat_ouvrages": {
-            "Dégrillage": "en_service",
-            "Dessablage/Dégraissage": "en_service",
-            "Décanteur primaire": "en_service",
-            "Bassins d'aération": "en_service",
-            "Décanteur secondaire": "en_service",
-            "Filtration sur sable": "en_service",
-            "Désinfection UV": "en_service",
-            "Épaississement des boues": "en_service",
-            "Déshydratation mécanique": "en_service",
-            "Lits de séchage": "en_service"
-        },
-        "date_maj": "2025-08-31 11:16:26"
-    },
-    {
-        "station_id": "b68dea1a-bd99-4547-b063-142f9cf6a246",
-        "date": "2025-08-28",
-        "etat_ouvrages": {
-            "Dégrillage fin": "en_service",
-            "Dessablage/Dégraissage": "en_service",
-            "Décanteur lamellaire": "en_service",
-            "Bassins plantés de roseaux": "en_service",
-            "Clarificateur": "en_service",
-            "Filtration sur sable": "en_service",
-            "Désinfection UV": "en_service",
-            "Épaississement gravitaire": "en_service",
-            "Déshydratation mécanique": "en_service"
-        },
-        "date_maj": "2025-08-31 11:16:26"
-    },
-    {
-        "station_id": "bee2f514-dcfc-4d9a-bd8e-e223be374629",
-        "date": "2025-08-30",
-        "etat_ouvrages": {
-            "Dégrillage": "en_service",
-            "Dessablage/Dégraissage": "en_service",
-            "Décanteur primaire": "en_service",
-            "Lagune aérée": "en_service",
-            "Décanteur secondaire": "en_service",
-            "Épaississement des boues": "en_service",
-            "Séchage naturel sur lit de séchage": "en_service",
-            "Filtration sur sable": "en_service",
-            "Désinfection UV": "en_service"
-        },
-        "date_maj": "2025-08-31 11:16:26"
+        "Désinfection UV": "inexistant",
+        "Filtration sur sable": "inexistant",
+        "Lits de séchage": "arret_volontaire",
+        "Épaississement des boues": "hors_service"
+      },
+      "station_id": "d7be6b39-2a59-4f23-871a-f74a5f924918",
+      "station_nom": "Chlef"
     }
-]
+  ],
+  "adb61b80-72e9-4585-a779-509007037f46": [
+    {
+      "station_id": "adb61b80-72e9-4585-a779-509007037f46",
+      "date": "2025-09-01",
+      "etat_ouvrages": {},
+      "date_maj": "2025-09-01 15:19:24"
+    },
+    {
+      "station_id": "adb61b80-72e9-4585-a779-509007037f46",
+      "date": "2025-09-01",
+      "etat_ouvrages": {
+        "Bassins d'aération": "en_dysfonctionnement",
+        "Dessablage/Dégraissage": "hors_service",
+        "Décanteur primaire": "inexistant",
+        "Décanteur secondaire": "en_dysfonctionnement",
+        "Dégrillage": "en_dysfonctionnement",
+        "Déshydratation mécanique": "inexistant",
+        "Désinfection UV": "inexistant",
+        "Filtration sur sable": "inexistant",
+        "Lits de séchage": "arret_volontaire",
+        "Épaississement des boues": "hors_service"
+      },
+      "date_maj": "2025-09-01 15:34:15"
+    }
+  ],
+  "7deb7ced-2ca4-4b50-83ec-94f3eb2a57a5": {
+    "station_id": "7deb7ced-2ca4-4b50-83ec-94f3eb2a57a5",
+    "date": "2025-09-01",
+    "etat_ouvrages": {},
+    "date_maj": "2025-09-01 15:36:23"
+  }
+}
