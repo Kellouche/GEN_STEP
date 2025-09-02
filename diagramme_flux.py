@@ -1,6 +1,57 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# Configurer le backend de matplotlib pour l'affichage interactif
+try:
+    import tkinter as tk
+    import matplotlib
+    matplotlib.use('TkAgg')  # Utiliser le backend TkAgg pour l'affichage interactif
+except ImportError:
+    import matplotlib
+    matplotlib.use('Agg')  # Fallback sur le backend non interactif si Tkinter n'est pas disponible
+
+import os
+import json
+import logging
+from datetime import datetime
+from typing import Dict, List, Optional, Tuple, Union, Any
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import matplotlib.patheffects as path_effects
+from matplotlib import rcParams
+
+# Configuration de matplotlib pour éviter les figures multiples
+plt.close('all')  # Fermer toutes les figures existantes
+plt.ioff()  # Désactiver le mode interactif par défaut
+
+# Configuration de la police pour le support des émojis
+plt.rcParams.update({
+    'font.family': 'sans-serif',
+    'font.sans-serif': ['Segoe UI Emoji', 'DejaVu Sans', 'Arial', 'sans-serif'],
+    'figure.autolayout': True,
+    'figure.raise_window': False  # Empêche la fenêtre de s'afficher automatiquement
+})
+
+# Configuration du logging
+log = logging.getLogger(__name__)
+
+import os
+import json
+import logging
+import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib import patches, text
+import numpy as np
+from typing import List, Dict, Any, Optional, Tuple
+from collections import OrderedDict
+
+# Configuration de la police pour prendre en charge les émojis
+import matplotlib as mpl
+mpl.rcParams['font.family'] = 'Segoe UI Emoji'
+
+# Configuration du logging
+log = logging.getLogger(__name__)
+
 import os
 import json
 import numpy as np
@@ -78,8 +129,6 @@ class DiagrammeFlux:
                     config_station = types_config[self.type_station]
                     self.filiere_eau = config_station.get('filiere_eau', {})
                     self.filiere_boue = config_station.get('filiere_boue', [])
-                    print(f"[DEBUG] Configuration chargée - filiere_eau: {self.filiere_eau}")
-                    print(f"[DEBUG] Configuration chargée - filiere_boue: {self.filiere_boue}")
         except Exception as e:
             log.error(f"Erreur lors du chargement de la configuration des types : {e}")
     
@@ -473,11 +522,6 @@ class DiagrammeFlux:
         
         # 3. Dessiner les flèches pour les boues (primaire et secondaire)
         if hasattr(self, 'type_station') and hasattr(self, 'filiere_eau'):
-            print(f"\n[DEBUG] Contenu de filiere_eau:")
-            for key, value in self.filiere_eau.items():
-                print(f"  {key}: {value}")
-                
-            # 3.1 Flèches des décanteurs vers l'épaississement
             boues_config = {}
             
             # Récupérer les configurations de boues si elles existent
@@ -522,7 +566,8 @@ class DiagrammeFlux:
                     ax.text(
                         label_x, label_y,
                         etiquette,
-                        ha='center', va='top',
+                        ha='center',
+                        va='top',
                         fontsize=9,
                         bbox=dict(
                             facecolor='#8B4513',
@@ -536,11 +581,9 @@ class DiagrammeFlux:
                     )
             # 3.2 Flèches pour la filière boue
             if hasattr(self, 'filiere_boue') and len(self.filiere_boue) > 1:
-                print(f"\n[DEBUG] Filière boue: {self.filiere_boue}")
                 
                 # Le premier élément est la source (épaississement)
                 source_nom = self.filiere_boue[0]
-                print(f"[DEBUG] Source principale: {source_nom}")
                 
                 if source_nom in ouvrages_par_nom:
                     source = ouvrages_par_nom[source_nom]
@@ -554,9 +597,6 @@ class DiagrammeFlux:
                             x2 = dest['x'] + dest['largeur'] / 2
                             # Ajuster y2 pour arriver exactement sur le bord inférieur du bloc de destination
                             y2 = dest['y']  # Bord inférieur de la destination
-                            
-                            print(f"[DEBUG] Source: {source_nom} (x1={x1:.2f}, y1={y1:.2f})")
-                            print(f"[DEBUG] Destination: {dest_nom} (x2={x2:.2f}, y2={y2:.2f})")
                             
                             # Dessiner la flèche avec une courbure réduite
                             ax.annotate(
@@ -581,39 +621,21 @@ class DiagrammeFlux:
             
     def _formater_nom_ouvrage(self, nom: str) -> str:
         """
-        Formate le nom d'un ouvrage pour un affichage optimal sur plusieurs lignes.
+        Formate le nom d'un ouvrage pour un affichage sur une seule ligne.
         
         Args:
             nom: Le nom de l'ouvrage à formater
             
         Returns:
-            Le nom formaté avec des retours à la ligne
+            Le nom formaté sur une seule ligne
         """
-        # Remplacer les tirets et barres obliques par des retours à la ligne
+        # Remplacer les séparateurs par des espaces simples
         separators = [' - ', ' / ', ' /', '/ ', ' -', '- ']
         for sep in separators:
-            nom = nom.replace(sep, '\n')
+            nom = nom.replace(sep, ' ')
         
-        # Diviser les lignes trop longues
-        lignes = []
-        for ligne in nom.split('\n'):
-            if len(ligne) > 20:  # Si la ligne est trop longue
-                mots = ligne.split()
-                nouvelle_ligne = mots[0]
-                
-                for mot in mots[1:]:
-                    if len(nouvelle_ligne) + len(mot) < 15:  # Limite de 15 caractères par ligne
-                        nouvelle_ligne += ' ' + mot
-                    else:
-                        lignes.append(nouvelle_ligne)
-                        nouvelle_ligne = mot
-                
-                if nouvelle_ligne:
-                    lignes.append(nouvelle_ligne)
-            else:
-                lignes.append(ligne)
-        
-        return '\n'.join(lignes)
+        # Supprimer les espaces multiples
+        return ' '.join(nom.split())
     
     def generer_diagramme(self, liste_ouvrages: list, titre: str, destination: str = None):
         """
@@ -623,58 +645,56 @@ class DiagrammeFlux:
             liste_ouvrages: Liste des ouvrages à afficher
             titre: Titre du diagramme (déjà formaté avec la date)
             destination: Destination finale des eaux épurées (ex: "Rejet", "Réutilisation") (optionnel)
+            
+        Returns:
+            tuple: Figure et axes matplotlib
         """
-        # Fermer toutes les figures existantes pour éviter les figures indésirées
-        plt.close('all')
-        
-        # Afficher le titre pour le débogage
-        print(f"[DEBUG] Titre reçu dans generer_diagramme : {titre}")
-        
         # Préparer les données
         ouvrages = self.parser_ouvrages(liste_ouvrages)
         filieres = self.classer_par_filiere(ouvrages)
         ouvrages_positionnes = self.calculer_positions(filieres)
         
-        # Créer et afficher le diagramme
-        fig, ax = self.dessiner_diagramme(ouvrages_positionnes, destination)
+        # Créer une nouvelle figure avec constrained_layout pour un meilleur espacement
+        fig, ax = plt.subplots(figsize=(14, 8), dpi=100, facecolor='white', 
+                             constrained_layout=True)
+        
+        # Désactiver l'affichage automatique
+        plt.ioff()
+        
+        # Dessiner le diagramme
+        self.dessiner_diagramme(ax, ouvrages_positionnes, destination)
         
         # Diviser le titre en lignes pour un meilleur affichage
         lignes_titre = titre.split('\n')
         
         # Ajouter le titre principal avec un espacement amélioré
-        plt.suptitle(
+        fig.suptitle(
             '\n'.join(lignes_titre),
-            fontsize=14,
+            fontsize=13,
             fontweight='bold',
-            y=0.99,  # Ajuster légèrement vers le haut
+            y=0.99,
             verticalalignment='top',
             horizontalalignment='center',
-            linespacing=1.5  # Espacement des lignes pour une meilleure lisibilité
+            linespacing=1.3
         )
         
-        # Ajuster l'espacement pour éviter que le titre ne soit coupé
-        plt.subplots_adjust(top=0.85)
+        # Ajuster l'espacement
+        fig.set_constrained_layout_pads(w_pad=0.1, h_pad=0.1, hspace=0.1, wspace=0.1)
         
-        # Afficher la figure
-        plt.tight_layout(rect=[0, 0, 1, 0.95])  # Réserver de l'espace pour le titre
-        plt.show()
+        return fig, ax
     
-    def dessiner_diagramme(self, ouvrages_positionnes: list, destination: str = None):
+    def dessiner_diagramme(self, ax, ouvrages_positionnes: list, destination: str = None):
         """
         Dessine le diagramme de flux avec les ouvrages positionnés.
         
         Args:
+            ax: Axes matplotlib où dessiner
             ouvrages_positionnes: Liste des ouvrages avec leurs positions
             destination: Destination finale des eaux épurées (optionnel)
             
         Returns:
             tuple: Figure et axes matplotlib
         """
-        # Créer une seule figure avec un numéro spécifique
-        fig = plt.figure(1, figsize=(20, 12), dpi=100)
-        plt.clf()  # Efface la figure existante
-        ax = fig.add_subplot(111)
-        
         # Déterminer les limites automatiquement
         if ouvrages_positionnes:
             x_vals = [o['x'] for o in ouvrages_positionnes]
@@ -688,9 +708,9 @@ class DiagrammeFlux:
             y_min = min(y_vals) - y_margin
             y_max = max(y_vals) + self.hauteur_bloc + y_margin
         else:
-            x_min, x_max = 0, 20
-            y_min, y_max = -20, 2
-
+            x_min, x_max = 0, 16  # Ajusté pour correspondre à la nouvelle largeur
+            y_min, y_max = -16, 2  # Ajusté pour correspondre à la nouvelle hauteur
+        
         # Dessiner chaque ouvrage
         for ouvrage in ouvrages_positionnes:
             # Récupérer la couleur en fonction de l'état
@@ -844,12 +864,8 @@ class DiagrammeFlux:
         # Ajuster le layout pour laisser de l'espace pour le titre et la légende
         plt.tight_layout(rect=[0, 0.05, 1, 0.97])
         
-        # Afficher en plein écran
-        mng = plt.get_current_fig_manager()
-        mng.window.state('zoomed')
-        
         # Ne pas afficher la figure ici, laisser la méthode appelante gérer l'affichage
-        return fig, ax
+        return ax
     
     def ajouter_legende(self, ax):
         """
@@ -1151,12 +1167,12 @@ def generer_diagramme_station():
         # Si une seule mise à jour, on l'utilise directement
         if len(mises_a_jour) == 1:
             etat_ouvrages = mises_a_jour[0].get('etat_ouvrages', {})
-            date_maj = mises_a_jour[0].get('date_maj', 'Date inconnue')
+            date_maj = mises_a_jour[0].get('date', 'Date inconnue')
         else:
             # Afficher la liste des mises à jour disponibles
             print("\n\033[1mMises à jour disponibles :\033[0m")
             for i, maj in enumerate(mises_a_jour, 1):
-                date_maj = maj.get('date_maj', 'Date inconnue')
+                date_maj = maj.get('date', 'Date inconnue')
                 print(f"{i}. {date_maj}")
             
             # Demander à l'utilisateur de choisir
@@ -1169,13 +1185,13 @@ def generer_diagramme_station():
                     choix = int(choix) - 1
                     if 0 <= choix < len(mises_a_jour):
                         break
-                        
+                            
                     print("\033[1;31m❌ Numéro invalide. Veuillez réessayer.\033[0m")
                 except ValueError:
                     print("\033[1;31m❌ Veuillez entrer un numéro valide.\033[0m")
             
             etat_ouvrages = mises_a_jour[choix].get('etat_ouvrages', {})
-            date_maj = mises_a_jour[choix].get('date_maj', 'Date inconnue')
+            date_maj = mises_a_jour[choix].get('date', 'Date inconnue')
         
         # Récupérer la liste des ouvrages pour ce type de procédé
         try:
@@ -1217,22 +1233,69 @@ def generer_diagramme_station():
                 
                 # Créer le titre avec la date formatée
                 titre = f"STEP {nom_station} | Type de procédé : {type_procede_formate}\nMise à jour du {date_formatee}"
-                print(f"[DEBUG] Date formatée pour le titre : {date_formatee}")
+            
             except Exception as e:
                 print(f"\033[1;33m⚠️  Erreur de format de date: {e}. Utilisation de la date brute: {date_maj}\033[0m")
                 titre = f"STEP {nom_station} | Type de procédé : {type_procede_formate}\nMise à jour du {date_maj}"
         else:
             titre = f"STEP {nom_station} | Type de procédé : {type_procede_formate}\nDate de mise à jour inconnue"
-        
-        print(f"[DEBUG] Titre complet : {titre}")
-        
+                   
         # Créer une instance du diagramme et générer le diagramme
+        print("\n\033[1mGénération du diagramme en cours...\033[0m")
+        diagramme = DiagrammeFlux(type_station=type_procede)
+        
+        # Créer la figure et configurer pour le plein écran
+        fig = plt.figure(figsize=(14, 8), dpi=100, num='Diagramme STEP', clear=True)
+        manager = plt.get_current_fig_manager()
         try:
-            diagramme = DiagrammeFlux(type_station=type_procede)
-            diagramme.generer_diagramme(ouvrages, titre, destination="Rejet")
-            print("\n\033[1;32m✅ Diagramme généré avec succès !\033[0m")
+            # Essayer de maximiser la fenêtre (fonctionne avec la plupart des backends)
+            manager.window.state('zoomed')  # Pour TkAgg
+        except:
+            try:
+                manager.window.showMaximized()  # Pour Qt5Agg
+            except:
+                pass  # Si la maximisation échoue, on continue avec la taille normale
+        
+        ax = fig.add_subplot(111)
+        
+        # Dessiner le diagramme directement
+        diagramme.dessiner_diagramme(ax, diagramme.calculer_positions(
+            diagramme.classer_par_filiere(diagramme.parser_ouvrages(ouvrages))
+        ), "Rejet")
+        
+        # Ajouter le titre
+        fig.suptitle(titre, fontsize=13, fontweight='bold', y=0.99)
+        fig.tight_layout(rect=[0, 0, 1, 0.95])
+        
+        # Afficher la figure
+        try:
+            print("\033[1;32m✅ Diagramme généré avec succès !\033[0m")
+            
+            # Afficher la figure de manière non bloquante
+            plt.show(block=False)
+            plt.pause(0.1)  # Donner le temps à la figure de s'afficher
+            
+            # Demander à l'utilisateur s'il souhaite enregistrer le diagramme
+            while True:
+                choix = input("\nVoulez-vous enregistrer le diagramme ? (o/n): ").strip().lower()
+                if choix in ['o', 'n']:
+                    break
+                print("\033[1;31m❌ Veuillez répondre par 'o' ou 'n'.\033[0m")
+            
+            if choix == 'o':
+                # Créer un nom de fichier basé sur le nom de la station et la date
+                nom_fichier = f"diagramme_{nom_station.lower().replace(' ', '_')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+                fig.savefig(nom_fichier, bbox_inches='tight', dpi=100)
+                print(f"\033[1;32m✅ Diagramme enregistré sous : {nom_fichier}\033[0m")
+            
         except Exception as e:
-            raise Exception(f"Erreur lors de la génération du diagramme: {str(e)}")
+            # En cas d'échec d'affichage, sauvegarder automatiquement
+            print(f"\033[1;33m⚠️  Impossible d'afficher la figure de manière interactive. Sauvegarde dans 'diagramme.png'\033[0m")
+            fig.savefig('diagramme.png', bbox_inches='tight', dpi=100)
+            print("\033[1;32m✅ Diagramme sauvegardé dans 'diagramme.png'\033[0m")
+        
+        # Nettoyer la figure
+        plt.close(fig)
         
     except KeyboardInterrupt:
         print("\n\033[1;33m❌ Opération annulée par l'utilisateur.\033[0m")

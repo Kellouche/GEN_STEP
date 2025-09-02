@@ -1,20 +1,11 @@
 [
   {
-    "id": "adb61b80-72e9-4585-a779-509007037f46",
+    "id": "5bb78ce2-42ef-485f-9747-2870c73de665",
     "nom": "Chlef",
     "localisation": "Chlef",
     "debit_nominal": 36504.0,
     "type_procede": "boues_activées",
     "destination": "Milieu naturel",
-    "date_creation": "2025-09-01"
-  },
-  {
-    "id": "7deb7ced-2ca4-4b50-83ec-94f3eb2a57a5",
-    "nom": "Chettia",
-    "localisation": "Chettia",
-    "debit_nominal": 5500.0,
-    "type_procede": "lagunage_aéré",
-    "destination": "Irrigation agricole",
-    "date_creation": "2025-09-01"
+    "date_creation": "2025-09-02"
   }
 ]

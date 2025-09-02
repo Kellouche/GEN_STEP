@@ -4,6 +4,7 @@ import os
 import platform
 import subprocess
 from datetime import datetime, timedelta
+from collections import OrderedDict
 
 # Import des fonctions utilitaires
 from utils import log_erreur, log_info, log_avertissement, formater_nom_procede
@@ -22,17 +23,26 @@ def load_json(path):
     try:
         # Vérifie si le fichier existe et n'est pas vide
         if not os.path.exists(path) or os.path.getsize(path) == 0:
-            return [] if "etat_station" in path or "stations" in path else {}
+            return [] if "etat_station" in path or "stations" in path else OrderedDict()
+            
+        def object_pairs_hook(pairs):
+            # Crée un OrderedDict à partir des paires clé-valeur
+            return OrderedDict(pairs)
             
         with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f, object_pairs_hook=object_pairs_hook)
+            
+            # Si c'est une liste, on la convertit en liste d'OrderedDict
+            if isinstance(data, list):
+                return [OrderedDict(item) if isinstance(item, dict) else item for item in data]
+            return data
             
     except json.JSONDecodeError as e:
         log_erreur(f"Erreur de décodage JSON dans {path}: {str(e)}")
-        return [] if "etat_station" in path or "stations" in path else {}
+        return [] if "etat_station" in path or "stations" in path else OrderedDict()
     except Exception as e:
         log_erreur(f"Erreur lors du chargement de {path}: {str(e)}")
-        return [] if "etat_station" in path or "stations" in path else {}
+        return [] if "etat_station" in path or "stations" in path else OrderedDict()
 
 def save_json(path, data):
     """
@@ -46,12 +56,26 @@ def save_json(path, data):
         # Crée le répertoire si nécessaire
         os.makedirs(os.path.dirname(path), exist_ok=True)
         
+        # Fonction pour convertir récursivement les dictionnaires en OrderedDict
+        def make_ordered(obj):
+            if isinstance(obj, dict):
+                return OrderedDict((k, make_ordered(v)) for k, v in obj.items())
+            elif isinstance(obj, list):
+                return [make_ordered(item) for item in obj]
+            else:
+                return obj
+        
+        # Convertir les données en OrderedDict
+        ordered_data = make_ordered(data)
+        
+        # Écrire dans le fichier en préservant l'ordre des clés
         with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-            
+            json.dump(ordered_data, f, indent=2, ensure_ascii=False, sort_keys=False)
+        
+        return True
     except Exception as e:
-        log_erreur(f"Erreur lors de la sauvegarde dans {path}: {str(e)}")
-        raise
+        log_erreur(f"Erreur lors de l'enregistrement du fichier {path}: {str(e)}")
+        return False
 
 def get_input(prompt, allow_commands=True):
     """
@@ -135,12 +159,13 @@ def get_yes_no(prompt):
             
         print("Veuillez répondre par 'o' pour oui ou 'n' pour non.")
 
-def customiser_ouvrages(etats_ouvrages):
+def customiser_ouvrages(etats_ouvrages, type_procede=None):
     """
     Permet à l'utilisateur de personnaliser les paramètres d'ouvrage.
     
     Args:
         etats_ouvrages (dict): Dictionnaire des états des ouvrages à personnaliser
+        type_procede (str, optional): Type de procédé pour ordonner les ouvrages
         
     Returns:
         dict: Dictionnaire des états mis à jour
@@ -149,12 +174,38 @@ def customiser_ouvrages(etats_ouvrages):
         return etats_ouvrages
         
     print("\nPersonnalisation des ouvrages:")
-    print("Entrez 'o' pour activer, 'n' pour désactiver, ou laissez vide pour conserver la valeur par défaut")
+    print("Entrez le numéro correspondant à l'état souhaité pour chaque ouvrage")
     
-    # Convertir le dictionnaire en liste de tuples pour l'affichage
-    ouvrages = list(etats_ouvrages.items())
+    # Si etats_ouvrages est déjà un dictionnaire d'états, on le copie
+    # Sinon, on suppose que c'est une liste de noms d'ouvrages et on crée un état par défaut
+    if not all(isinstance(v, str) for v in etats_ouvrages.values()):
+        noms_ouvrages = etats_ouvrages  # C'est une liste de noms
+        etats_ouvrages = {nom: 'en_service' for nom in noms_ouvrages}
     
-    for i, (nom, etat) in enumerate(ouvrages, 1):
+    # Obtenir la liste ordonnée des ouvrages si le type de procédé est fourni
+    if type_procede:
+        from main import get_ouvrages_procede as main_get_ouvrages_procede
+        ouvrages_ordre = main_get_ouvrages_procede(type_procede)
+        if ouvrages_ordre:
+            # Créer une liste ordonnée des ouvrages existants dans etat_ouvrages
+            ouvrages_a_afficher = []
+            # D'abord ajouter les ouvrages dans l'ordre du procédé
+            for ouvrage in ouvrages_ordre:
+                if ouvrage in etats_ouvrages:
+                    ouvrages_a_afficher.append(ouvrage)
+            # Puis ajouter les ouvrages restants qui ne sont pas dans l'ordre du procédé
+            for ouvrage in etats_ouvrages:
+                if ouvrage not in ouvrages_a_afficher:
+                    ouvrages_a_afficher.append(ouvrage)
+        else:
+            # Si on ne peut pas obtenir l'ordre, on utilise l'ordre des clés
+            ouvrages_a_afficher = list(etats_ouvrages.keys())
+    else:
+        # Si pas de type de procédé, on utilise l'ordre des clés
+        ouvrages_a_afficher = list(etats_ouvrages.keys())
+    
+    for i, nom in enumerate(ouvrages_a_afficher, 1):
+        etat = etats_ouvrages[nom]
         print(f"\n\033[1m--- Ouvrage {i}: {nom} (État actuel: {etat}) ---\033[0m")
         print("1. ✅  En service (rendement conforme)")
         print("2. ❌  En panne (arrêt total)")
@@ -162,7 +213,7 @@ def customiser_ouvrages(etats_ouvrages):
         print("4. 🔧  En maintenance (entretien/réparation)")
         print("5. 🚫  Hors service (non exploité)")
         print("6. ❓  Inexistant (non construit)")
-        print("7. ⏸️  À l’arrêt volontaire (arrêt choisi)")
+        print("7. ⏸️  À l'arrêt volontaire (arrêt choisi)")
         print("8. 📈  Surchargé / Saturé (au-delà capacité)")
         print("9. ✨  Nouvel ouvrage (construit nouvellement)")
         print("10. ➡️  Passer au suivant")
@@ -189,8 +240,9 @@ def customiser_ouvrages(etats_ouvrages):
             }
             
             if choix in etats:
-                etats_ouvrages[nom] = etats[choix]
-                print(f"État de {nom} mis à jour: {etats[choix].replace('_', ' ').title()}")
+                nouvel_etat = etats[choix]
+                etats_ouvrages[nom] = nouvel_etat
+                print(f"État de {nom} mis à jour: {nouvel_etat.replace('_', ' ').title()}")
                 break
             else:
                 print("❌ Option invalide. Veuillez réessayer.")
@@ -355,25 +407,22 @@ def create_station():
                 
             log_avertissement(f"Veuillez entrer un nombre entre 1 et {len(destinations)}")
         
-        # 6. Récupère la liste d'ouvrages
-        ouvrages = get_ouvrages_procede(data['type_procede'], types_dict)
-        if not ouvrages:
+        # 6. Récupère la liste d'ouvrages avec leurs états initiaux
+        etat_initial = get_ouvrages_procede(data['type_procede'], types_dict)
+        if not etat_initial:
             log_erreur("Aucun ouvrage trouvé pour ce type de procédé.")
             return None
         
         # 7. Personnalise les ouvrages si nécessaire
         if get_yes_no("Voulez-vous personnaliser les ouvrages ?"):
-            ouvrages = customiser_ouvrages(ouvrages)
-            if ouvrages is None:  # User cancelled
+            etat_initial = customiser_ouvrages(etat_initial, data['type_procede'])
+            if etat_initial is None:  # User cancelled
                 return None
         
-        # 8. Crée l'état initial des ouvrages
-        etat_initial = create_initial_state(ouvrages)
-        
-        # 9. Génère un ID unique
+        # 8. Génère un ID unique
         station_id = str(uuid.uuid4())
         
-        # 10. Prépare les données de la station (sans la clé ouvrages)
+        # 9. Prépare les données de la station (sans la clé ouvrages)
         station_data = {
             'id': station_id,
             'nom': data['nom'],
@@ -384,15 +433,18 @@ def create_station():
             'date_creation': datetime.now().strftime("%Y-%m-%d")
         }
         
-        # 11. Prépare les données de l'état initial
+        # 10. Prépare les données de l'état initial
+        print("\nOrdre des ouvrages avant enregistrement:")
+        for i, (ouvrage, etat) in enumerate(etat_initial.items(), 1):
+            print(f"{i}. {ouvrage}: {etat}")
+            
         etat_data = {
             'station_id': station_id,
             'date': datetime.now().strftime("%Y-%m-%d"),
-            'etat_ouvrages': etat_initial,
-            'date_maj': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            'etat_ouvrages': etat_initial,  # Déjà un OrderedDict
         }
         
-        # 12. Enregistre les données
+        # 11. Enregistre les données
         try:
             # Enregistre la station
             stations = load_json("data/stations.json")
@@ -404,11 +456,24 @@ def create_station():
             # Enregistre l'état initial
             etats_data = load_json("data/etat_station.json")
             if not isinstance(etats_data, dict):
-                etats_data = {}
+                etats_data = OrderedDict()
             
-            # L'état initial est un dictionnaire
-            etats_data[station_id] = etat_data
+            # Créer une nouvelle entrée avec l'ID de la station comme clé
+            etats_data[station_id] = [etat_data]
+            
+            # Afficher l'ordre avant sauvegarde
+            print("\nOrdre des ouvrages avant sauvegarde dans le fichier:")
+            for i, (ouvrage, etat) in enumerate(etat_data['etat_ouvrages'].items(), 1):
+                print(f"{i}. {ouvrage}: {etat}")
+            
             save_json("data/etat_station.json", etats_data)
+            
+            # Vérifier l'ordre après chargement
+            etats_verifies = load_json("data/etat_station.json")
+            if station_id in etats_verifies and etats_verifies[station_id]:
+                print("\nOrdre des ouvrages après chargement du fichier:")
+                for i, (ouvrage, etat) in enumerate(etats_verifies[station_id][0]['etat_ouvrages'].items(), 1):
+                    print(f"{i}. {ouvrage}: {etat}")
             
             log_info(f"Station '{data['nom']}' créée avec succès!")
             log_info(f"ID de la station: {station_id}")
@@ -430,5 +495,26 @@ def create_station():
         log_erreur(f"Erreur inattendue lors de la création de la station: {str(e)}", exc_info=True)
         print("❌ Une erreur inattendue est survenue. Voir les logs pour plus de détails.")
         return None
+
+def create_initial_state(ouvrages):
+    """
+    Crée un état initial pour les ouvrages de la station.
+    
+    Args:
+        ouvrages: Liste des ouvrages du procédé
+        
+    Returns:
+        dict: Dictionnaire des états initiaux des ouvrages
+    """
+    etat_initial = {}
+    
+    # Par défaut, tous les ouvrages sont en service
+    for ouvrage in ouvrages:
+        if isinstance(ouvrage, dict) and 'nom' in ouvrage:
+            etat_initial[ouvrage['nom']] = 'en_service'
+        elif isinstance(ouvrage, str):
+            etat_initial[ouvrage] = 'en_service'
+    
+    return etat_initial
 
 # Ce module est conçu pour être importé et utilisé par main.py

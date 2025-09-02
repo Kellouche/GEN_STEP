@@ -1,53 +1,20 @@
 {
-  "d7be6b39-2a59-4f23-871a-f74a5f924918": [
+  "5bb78ce2-42ef-485f-9747-2870c73de665": [
     {
-      "date": "2025-09-01",
-      "date_maj": "2025-09-01 15:06:57",
+      "station_id": "5bb78ce2-42ef-485f-9747-2870c73de665",
+      "date": "2025-09-02",
       "etat_ouvrages": {
-        "Bassins d'aération": "en_dysfonctionnement",
+        "Dégrillage": "en_dysfonctionnement",
         "Dessablage/Dégraissage": "en_panne",
         "Décanteur primaire": "inexistant",
-        "Décanteur secondaire": "en_dysfonctionnement",
-        "Dégrillage": "en_dysfonctionnement",
-        "Déshydratation mécanique": "inexistant",
-        "Désinfection UV": "inexistant",
-        "Filtration sur sable": "inexistant",
-        "Lits de séchage": "arret_volontaire",
-        "Épaississement des boues": "hors_service"
-      },
-      "station_id": "d7be6b39-2a59-4f23-871a-f74a5f924918",
-      "station_nom": "Chlef"
-    }
-  ],
-  "adb61b80-72e9-4585-a779-509007037f46": [
-    {
-      "station_id": "adb61b80-72e9-4585-a779-509007037f46",
-      "date": "2025-09-01",
-      "etat_ouvrages": {},
-      "date_maj": "2025-09-01 15:19:24"
-    },
-    {
-      "station_id": "adb61b80-72e9-4585-a779-509007037f46",
-      "date": "2025-09-01",
-      "etat_ouvrages": {
         "Bassins d'aération": "en_dysfonctionnement",
-        "Dessablage/Dégraissage": "hors_service",
-        "Décanteur primaire": "inexistant",
         "Décanteur secondaire": "en_dysfonctionnement",
-        "Dégrillage": "en_dysfonctionnement",
-        "Déshydratation mécanique": "inexistant",
-        "Désinfection UV": "inexistant",
         "Filtration sur sable": "inexistant",
-        "Lits de séchage": "arret_volontaire",
-        "Épaississement des boues": "hors_service"
-      },
-      "date_maj": "2025-09-01 15:34:15"
+        "Désinfection UV": "inexistant",
+        "Épaississement des boues": "hors_service",
+        "Déshydratation mécanique": "inexistant",
+        "Lits de séchage": "en_dysfonctionnement"
+      }
     }
-  ],
-  "7deb7ced-2ca4-4b50-83ec-94f3eb2a57a5": {
-    "station_id": "7deb7ced-2ca4-4b50-83ec-94f3eb2a57a5",
-    "date": "2025-09-01",
-    "etat_ouvrages": {},
-    "date_maj": "2025-09-01 15:36:23"
-  }
+  ]
 }

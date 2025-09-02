@@ -2,6 +2,7 @@ import json
 import os
 from datetime import datetime
 import logging
+from collections import OrderedDict
 
 # Configuration du système de logs
 logging.basicConfig(
@@ -74,7 +75,6 @@ def get_types():
             if isinstance(value, dict):
                 value['display_name'] = formater_nom_procede(key)
         
-        log_info(f"Chargé {len(types)} types de procédés")
         return types
         
     except Exception as e:
@@ -105,67 +105,72 @@ def create_initial_state(ouvrages):
 
 def get_ouvrages_procede(procedure_type, types_data):
     """
-    Récupère la liste des ouvrages pour un type de procédé donné
+    Récupère la liste des ouvrages pour un type de procédé donné en respectant l'ordre logique de traitement.
     
     Args:
-        procedure_type (str): Le type de procédé (ex: 'boues_activees')
+        procedure_type (str): Le type de procédé (ex: 'MBR')
         types_data (dict): Les données des types de procédés
         
     Returns:
-        list: Liste des ouvrages pour ce procédé
+        OrderedDict: Dictionnaire ordonné des états initiaux des ouvrages
     """
     if not procedure_type or not isinstance(types_data, dict):
         log_avertissement("Type de procédé ou données de types invalides")
-        return []
+        return OrderedDict()
     
     try:
         # Vérifier si le type de procédé existe
         if procedure_type not in types_data:
             log_avertissement(f"Type de procédé '{procedure_type}' non trouvé dans les données")
-            return []
+            return OrderedDict()
             
         procedure_data = types_data[procedure_type]
         if not isinstance(procedure_data, dict):
             log_avertissement(f"Données du procédé '{procedure_type}' invalides")
-            return []
+            return OrderedDict()
         
-        # Récupérer les ouvrages de la filière eau
-        filiere_eau = procedure_data.get('filiere_eau', {})
-        ouvrages = []
+        etat_initial = OrderedDict()
         
-        # Ajouter les ouvrages de chaque étape du traitement
-        for etape, items in filiere_eau.items():
-            if isinstance(items, list):
-                for item in items:
-                    if isinstance(item, str) and item.strip():
-                        ouvrages.append(item.strip())
-        
-        # Ajouter les ouvrages de la filière boue si elle existe
-        filiere_boue = procedure_data.get('filiere_boue', [])
-        if isinstance(filiere_boue, list):
-            for item in filiere_boue:
+        # 1. Filière eau - prétraitement
+        pretraitement = procedure_data.get('filiere_eau', {}).get('pretraitement', [])
+        if isinstance(pretraitement, list):
+            for item in pretraitement:
                 if isinstance(item, str) and item.strip():
-                    ouvrages.append(item.strip())
+                    etat_initial[item.strip()] = 'en_service'
         
-        # Ajouter le traitement tertiaire s'il existe
+        # 2. Filière eau - traitement primaire
+        traitement_primaire = procedure_data.get('filiere_eau', {}).get('traitement_primaire', [])
+        if isinstance(traitement_primaire, list):
+            for item in traitement_primaire:
+                if isinstance(item, str) and item.strip():
+                    etat_initial[item.strip()] = 'en_service'
+        
+        # 3. Filière eau - traitement secondaire
+        traitement_secondaire = procedure_data.get('filiere_eau', {}).get('traitement_secondaire', [])
+        if isinstance(traitement_secondaire, list):
+            for item in traitement_secondaire:
+                if isinstance(item, str) and item.strip():
+                    etat_initial[item.strip()] = 'en_service'
+        
+        # 4. Traitement tertiaire
         traitement_tertiaire = procedure_data.get('traitement_tertiaire', [])
         if isinstance(traitement_tertiaire, list):
             for item in traitement_tertiaire:
-                if isinstance(item, str) and item.strip():
-                    ouvrages.append(item.strip())
+                if isinstance(item, str) and item.strip() and item.strip() not in etat_initial:
+                    etat_initial[item.strip()] = 'en_service'
         
-        # Éliminer les doublons
-        ouvrages = list(dict.fromkeys(ouvrages))
+        # 5. Filière boue
+        filiere_boue = procedure_data.get('filiere_boue', [])
+        if isinstance(filiere_boue, list):
+            for item in filiere_boue:
+                if isinstance(item, str) and item.strip() and item.strip() not in etat_initial:
+                    etat_initial[item.strip()] = 'en_service'
         
-        # Créer l'état initial pour ces ouvrages
-        etat_initial = create_initial_state(ouvrages)
-        
-        log_info(f"Chargé {len(ouvrages)} ouvrages pour le procédé '{procedure_type}'")
         return etat_initial
         
     except Exception as e:
         log_erreur(f"Erreur lors de la récupération des ouvrages pour le procédé '{procedure_type}': {str(e)}", exc_info=True)
-        return []
+        return OrderedDict()
 
 def get_stations():
     """
@@ -775,7 +780,7 @@ def draw_schema(station, date):
                     # Trouver le bloc source (dernier bloc du traitement secondaire)
                     for b in blocs:
                         # Vérifier si le nom du bloc (avec ou sans sauts de ligne) correspond à la source
-                        nom_brut = b["nom"].replace("\n", "").replace(" ", "").lower()
+                        nom_brut = b["nom"].replace("\n", "").strip()
                         source_tertiaire_clean = source_tertiaire.replace("/", "").replace(" ", "").lower()
                         if source_tertiaire_clean == nom_brut:
                             # Coordonnées du point de départ (bas du bloc source)

@@ -1,0 +1,30 @@
+# Dépendances principales
+matplotlib>=3.5.0
+numpy>=1.21.0
+
+# Dépendances pour l'interface graphique
+tkinter>=8.6  # Inclus avec Python sur Windows, requis pour TkAgg
+
+# Dépendances pour le traitement des dates et des fichiers
+python-dateutil>=2.8.2
+pytz>=2021.1
+
+# Outils de développement (optionnel mais recommandé)
+pylint>=2.8.2
+black>=21.5b2
+
+# Dépendances pour le packaging (si nécessaire)
+# setuptools>=56.0.0
+# wheel>=0.36.2
+
+# Note : Les dépendances suivantes sont généralement incluses avec Python,
+# mais sont listées ici pour référence :
+# - json
+# - os
+# - logging
+# - datetime
+# - typing
+# - collections
+# - shutil
+# - platform
+# - subprocess
