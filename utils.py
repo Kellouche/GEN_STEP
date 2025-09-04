@@ -285,10 +285,10 @@ def sauvegarder_etats_station(etats_station, station_id):
             
             # S'assurer que la date de mise à jour existe
             if 'date_maj' not in etat_propre:
-                etat_propre['date_maj'] = etat_propre.get('date', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                etat_propre['date_maj'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             
-            # Supprimer la date simple si nous avons date_maj
-            if 'date' in etat_propre and 'date_maj' in etat_propre:
+            # Supprimer la date simple si elle existe encore
+            if 'date' in etat_propre:
                 del etat_propre['date']
             
             etats_a_sauvegarder.append(etat_propre)

@@ -59,9 +59,9 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import logging
 from datetime import datetime
+from utils import get_stations_list, update_stations_cache, log_avertissement, log_erreur, log_info  # Ajout de l'import manquant
 
 # Importer les utilitaires
-from utils import get_stations_list, update_stations_cache
 from gen_station import get_ouvrages_procede  # Ajout de l'import manquant
 
 # Configuration du logging
@@ -204,37 +204,46 @@ class DiagrammeFlux:
             # Prétraitement
             'Dégrillage': 'pretraitement',
             'Dégrillage fin': 'pretraitement',
+            'Dégrillage grossier': 'pretraitement',
             'Dessablage/Dégraissage': 'pretraitement',
             
             # Traitement primaire
             'Décanteur primaire': 'traitement_primaire',
-            'Décanteur lamellaire': 'traitement_primaire',
+            'Bassin de décantation primaire': 'traitement_primaire',
+            'Décantation primaire': 'traitement_primaire',
+            'Lagune anaérobie': 'traitement_primaire',
+            'Lagune facultative': 'traitement_primaire',
+            'Lagune de maturation': 'traitement_primaire',
             
             # Traitement secondaire
-            'Bassins d\'aération': 'traitement_secondaire',
-            'Bassins à boues activées': 'traitement_secondaire',
-            'Bassins plantés de roseaux': 'traitement_secondaire',
-            'Lagune aérée': 'traitement_secondaire',
-            'Clarificateur': 'traitement_secondaire',
+            "Bassins d'aération": 'traitement_secondaire',
             'Décanteur secondaire': 'traitement_secondaire',
+            'Décantation intégrée': 'traitement_secondaire',
+            'Réacteur biologique séquentiel (SBR)': 'traitement_secondaire',
+            'Bassin de biofiltration': 'traitement_secondaire',
+            'Bassin biologique à membranes': 'traitement_secondaire',
+            'Lit planté de roseaux à écoulement horizontal': 'traitement_secondaire',
+            'Lit planté de roseaux à écoulement vertical': 'traitement_secondaire',
+            'Réacteur biologique compact': 'traitement_secondaire',
             
             # Traitement tertiaire
             'Filtration sur sable': 'traitement_tertiaire',
             'Désinfection UV': 'traitement_tertiaire',
+            'Filtration membranaire': 'traitement_tertiaire',
+            'Microfiltration/Ultrafiltration': 'traitement_tertiaire',
             
             # Traitement des boues
             'Épaississement des boues': 'traitement_boues',
-            'Épaississement gravitaire': 'traitement_boues',
             'Déshydratation mécanique': 'traitement_boues',
             'Lits de séchage': 'traitement_boues',
+            'Recirculation des boues': 'traitement_boues',
+            'Épaississement dynamique': 'traitement_boues',
+            'Minéralisation dans les lits plantés': 'traitement_boues',
+            'Curage périodique des boues minéralisées': 'traitement_boues',
+            'Évacuation des boues par curage périodique': 'traitement_boues',
             'Séchage naturel sur lit de séchage': 'traitement_boues',
             
             # Autres
-            'Stockage': 'stockage',
-            'Valorisation': 'valorisation',
-            'Épandage': 'epandage',
-            'Mise en décharge': 'mise_en_decharge',
-            'Incinération': 'incineration',
             'Rejet': 'rejet'
         }
         
@@ -520,23 +529,40 @@ class DiagrammeFlux:
                 zorder=1
             )
         
-        # 3. Dessiner les flèches pour les boues (primaire et secondaire)
-        if hasattr(self, 'type_station') and hasattr(self, 'filiere_eau'):
+        # 3. Dessiner les flèches pour les boues
+        if hasattr(self, 'type_station') and hasattr(self, 'filiere_eau') and isinstance(self.filiere_eau, dict):
+            # Dictionnaire pour stocker les configurations de boues
             boues_config = {}
             
-            # Récupérer les configurations de boues si elles existent
-            if hasattr(self.filiere_eau, 'get'):
-                if 'boues_primaires' in self.filiere_eau:
-                    boues_config['boues_primaires'] = self.filiere_eau['boues_primaires']
-                if 'boues_secondaires' in self.filiere_eau:
-                    boues_config['boues_secondaires'] = self.filiere_eau['boues_secondaires']
+            # Vérifier d'abord les boues_secondaires
+            if 'boues_secondaires' in self.filiere_eau and isinstance(self.filiere_eau['boues_secondaires'], dict):
+                boues_config['boues_secondaires'] = self.filiere_eau['boues_secondaires'].copy()
+                if 'etiquette' not in boues_config['boues_secondaires']:
+                    boues_config['boues_secondaires']['etiquette'] = 'Boues biologiques'
             
-            # Dessiner les flèches pour chaque type de boues
+            # Ensuite, vérifier les boues_primaires
+            if 'boues_primaires' in self.filiere_eau and isinstance(self.filiere_eau['boues_primaires'], dict):
+                boues_config['boues_primaires'] = self.filiere_eau['boues_primaires'].copy()
+                if 'etiquette' not in boues_config['boues_primaires']:
+                    boues_config['boues_primaires']['etiquette'] = 'Boues primaires'
+        
+            # Pour chaque configuration de boue trouvée
             for boue_type, config in boues_config.items():
+                if not isinstance(config, dict):
+                    continue
+                    
                 source_nom = config.get('source')
                 destination_nom = config.get('destination')
-                etiquette = config.get('etiquette', 'Boues')
+                etiquette = config.get('etiquette')
                 
+                # Si pas de destination, utiliser le premier ouvrage de la filière boue
+                if not destination_nom and hasattr(self, 'filiere_boue') and isinstance(self.filiere_boue, (list, dict)) and len(self.filiere_boue) > 0:
+                    destination_nom = self.filiere_boue[0] if isinstance(self.filiere_boue, list) else list(self.filiere_boue.keys())[0]
+                
+                if not source_nom or not destination_nom:
+                    log_avertissement(f"Configuration incomplète pour {boue_type}: source={source_nom}, destination={destination_nom}")
+                    continue
+                    
                 if source_nom in ouvrages_par_nom and destination_nom in ouvrages_par_nom:
                     source = ouvrages_par_nom[source_nom]
                     destination = ouvrages_par_nom[destination_nom]
@@ -547,8 +573,7 @@ class DiagrammeFlux:
                     
                     # Coordonnées d'arrivée (haut du bloc destination)
                     x2 = destination['x'] + destination['largeur'] / 2
-                    # Ajuster y2 pour arriver exactement sur le bord supérieur du bloc de destination
-                    y2 = destination['y'] + destination['hauteur']
+                    y2 = destination['y'] + destination['hauteur']  # Bord supérieur
                     
                     # Dessiner la flèche
                     ax.annotate(
@@ -579,6 +604,9 @@ class DiagrammeFlux:
                         color='white',
                         zorder=10
                     )
+                else:
+                    log_avertissement(f"Source ou destination non trouvée pour {boue_type}: source={source_nom}, destination={destination_nom}")
+                    
             # 3.2 Flèches pour la filière boue
             if hasattr(self, 'filiere_boue') and len(self.filiere_boue) > 1:
                 
@@ -787,7 +815,7 @@ class DiagrammeFlux:
             # Trouver le dernier ouvrage du traitement secondaire
             dernier_ouvrage_secondaire = None
             for ouvrage in reversed(ouvrages_tries):
-                if any(nom in ouvrage['nom'] for nom in ['Décanteur secondaire', 'Clarificateur', 'Bassin aération']):
+                if any(nom in ouvrage['nom'] for nom in ['Décanteur secondaire', 'Clarificateur', 'Bassin aération', 'Décantation intégrée', 'Bassin biologique à membranes']):
                     dernier_ouvrage_secondaire = ouvrage
                     break
             
@@ -810,10 +838,13 @@ class DiagrammeFlux:
             
         # Styles pour les différentes destinations
         styles_destination = {
-            'Rejet': {'color': '#1f77b4', 'icon': '🌊', 'style': 'normal', 'icon_size': 24},  # Bleu avec icône vague
-            'Milieu naturel': {'color': '#1f77b4', 'icon': '🌳', 'style': 'normal', 'icon_color': '#2ca02c', 'icon_size': 28},  # Bleu avec très grande icône arbre verte
+            'Autre': {'color': '#1f77b4', 'icon': '🌊', 'style': 'normal', 'icon_size': 24},  # Bleu avec icône vague
+            'Milieu naturel': {'color': '#1f77b4', 'icon': '🌳', 'style': 'normal', 'icon_color': '#2ca02c', 'icon_size': 28},  # Bleu avec icône arbre verte
             'Réutilisation': {'color': '#2ca02c', 'icon': '♻️', 'style': 'italic', 'icon_size': 22},  # Vert avec icône recyclage
             'Irrigation': {'color': '#8c564b', 'icon': '🌱', 'style': 'normal', 'icon_size': 22},  # Marron avec icône plante
+            'Irrigation agricole': {'color': '#8c564b', 'icon': '🚜', 'style': 'normal', 'icon_size': 24},  # Marron avec icône tracteur
+            'Irrigation des espaces verts': {'color': '#2e8b57', 'icon': '🌿', 'style': 'normal', 'icon_size': 26},  # Vert foncé avec icône feuille
+            'Industrie': {'color': '#ff7f0e', 'icon': '🏭', 'style': 'normal', 'icon_size': 24},  # Orange avec icône usine
         }
 
         # Afficher l'étiquette 'Eaux épurées'
@@ -1185,12 +1216,12 @@ def generer_diagramme_station():
         # Si une seule mise à jour, on l'utilise directement
         if len(mises_a_jour) == 1:
             etat_ouvrages = mises_a_jour[0].get('etat_ouvrages', {})
-            date_maj = mises_a_jour[0].get('date', 'Date inconnue')
+            date_maj = mises_a_jour[0].get('date_maj', 'Date inconnue')
         else:
             # Afficher la liste des mises à jour disponibles
             print("\n\033[1mMises à jour disponibles :\033[0m")
             for i, maj in enumerate(mises_a_jour, 1):
-                date_maj = maj.get('date', 'Date inconnue')
+                date_maj = maj.get('date_maj', 'Date inconnue')
                 print(f"{i}. {date_maj}")
             
             # Demander à l'utilisateur de choisir
@@ -1209,7 +1240,7 @@ def generer_diagramme_station():
                     print("\033[1;31m❌ Veuillez entrer un numéro valide.\033[0m")
             
             etat_ouvrages = mises_a_jour[choix].get('etat_ouvrages', {})
-            date_maj = mises_a_jour[choix].get('date', 'Date inconnue')
+            date_maj = mises_a_jour[choix].get('date_maj', 'Date inconnue')
         
         # Récupérer la liste des ouvrages pour ce type de procédé
         try:
@@ -1244,20 +1275,30 @@ def generer_diagramme_station():
         # Formater la date pour l'affichage
         if date_maj and date_maj != "Date inconnue":
             try:
-                # Extraire la date du format "YYYY-MM-DD HH:MM:SS"
-                date_part = date_maj.split(' ')[0]  # Prendre uniquement la partie date
-                date_obj = datetime.strptime(date_part, '%Y-%m-%d')
-                date_formatee = date_obj.strftime('%d/%m/%Y')
+                # Essayer différents formats de date
+                if isinstance(date_maj, str):
+                    if 'T' in date_maj:  # Format ISO avec 'T'
+                        date_obj = datetime.fromisoformat(date_maj.replace('Z', '+00:00'))
+                    else:
+                        # Essayer le format 'YYYY-MM-DD HH:MM:SS'
+                        try:
+                            date_obj = datetime.strptime(date_maj, '%Y-%m-%d %H:%M:%S')
+                        except ValueError:
+                            # Essayer le format 'YYYY-MM-DD'
+                            date_obj = datetime.strptime(date_maj, '%Y-%m-%d')
+                    date_formatee = date_obj.strftime('%d/%m/%Y')
+                else:
+                    # Si date_maj est déjà un objet datetime
+                    date_formatee = date_maj.strftime('%d/%m/%Y')
                 
-                # Créer le titre avec la date formatée
                 titre = f"STEP {nom_station} | Type de procédé : {type_procede_formate}\nMise à jour du {date_formatee}"
             
             except Exception as e:
                 print(f"\033[1;33m⚠️  Erreur de format de date: {e}. Utilisation de la date brute: {date_maj}\033[0m")
                 titre = f"STEP {nom_station} | Type de procédé : {type_procede_formate}\nMise à jour du {date_maj}"
         else:
-            titre = f"STEP {nom_station} | Type de procédé : {type_procede_formate}\nDate de mise à jour inconnue"
-                   
+            titre = f"STEP {nom_station} | Type de procédé : {type_procede_formate}"
+                    
         # Créer une instance du diagramme et générer le diagramme
         print("\n\033[1mGénération du diagramme en cours...\033[0m")
         diagramme = DiagrammeFlux(type_station=type_procede)
