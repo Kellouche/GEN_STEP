@@ -8,13 +8,13 @@ Application Python pour la génération et la gestion de diagrammes de flux pour
 ### Vue d'Ensemble du Pipeline
 ```
 ┌─────────────────┐     ┌──────────────────┐     ┌───────────────────┐
-│   Initialisation ├────>│  Menu Principal  ├────>│ Gestion des Données │
+│   Initialisation├────>│  Menu Principal  ├────>│Gestion des Données│
 └────────┬────────┘     └────────┬─────────┘     └────────┬──────────┘
          │                       │                        │
          │                       ▼                        ▼
          │              ┌──────────────────┐     ┌──────────────────┐
          └──────────────┤  Journalisation  │<────┤ Génération       │
-                        └────────┬──────────┘     │ des Diagrammes   │
+                        └────────┬─────────┘     │ des Diagrammes   │
                                  │               └────────┬─────────┘
                                  │                        │
                                  └───────────┬────────────┘
