@@ -158,7 +158,7 @@ def get_station_by_id(station_id: str) -> Optional[Dict[str, Any]]:
 def charger_etats_station() -> Dict[str, Any]:
     """
     Charge l'état des stations depuis le fichier JSON.
-    Gère à la fois l'ancien et le nouveau format de données.
+    Gère plusieurs formats de données pour assurer la rétrocompatibilité.
     """
     try:
         if not os.path.exists('data/etat_station.json'):
@@ -169,22 +169,65 @@ def charger_etats_station() -> Dict[str, Any]:
             
         # Si le fichier est vide ou pas un dictionnaire
         if not isinstance(etats_data, dict):
+            log.warning("Le fichier etat_station.json ne contient pas un objet JSON valide")
             return {}
             
-        # Vérifier si c'est l'ancien format (sans liste)
         result = {}
+        
         for station_id, data in etats_data.items():
-            if isinstance(data, dict):
-                # Ancien format - convertir en liste
-                result[station_id] = [data]
-            elif isinstance(data, list):
-                # Nouveau format - garder tel quel
-                result[station_id] = data
+            if not data:
+                continue
                 
+            # Cas 1: Données dans une liste (format attendu)
+            if isinstance(data, list):
+                etats_list = []
+                for item in data:
+                    # Si l'item est un dictionnaire avec une liste d'états
+                    if isinstance(item, dict) and station_id in item and isinstance(item[station_id], list):
+                        etats_list.extend(item[station_id])
+                    # Si l'item est directement un état
+                    elif isinstance(item, dict):
+                        etats_list.append(item)
+                
+                if etats_list:
+                    result[station_id] = etats_list
+            # Cas 2: Données directes (ancien format)
+            elif isinstance(data, dict):
+                # Si c'est un état direct
+                if 'etat_ouvrages' in data or 'date' in data or 'date_maj' in data:
+                    result[station_id] = [data]
+        
+        # Nettoyer les données chargées
+        for station_id, etats in result.items():
+            for i, etat in enumerate(etats):
+                if not isinstance(etat, dict):
+                    continue
+                    
+                # S'assurer que chaque état a un champ etat_ouvrages
+                if 'etat_ouvrages' not in etat:
+                    etat['etat_ouvrages'] = {}
+                # S'assurer que etat_ouvrages est un dictionnaire
+                elif not isinstance(etat['etat_ouvrages'], dict):
+                    try:
+                        etat['etat_ouvrages'] = dict(etat['etat_ouvrages'])
+                    except (TypeError, ValueError):
+                        etat['etat_ouvrages'] = {}
+                
+                # S'assurer que l'ID de station est présent
+                if 'station_id' not in etat:
+                    etat['station_id'] = station_id
+                
+                # S'assurer que la date de mise à jour existe
+                if 'date_maj' not in etat:
+                    etat['date_maj'] = etat.get('date', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        
         return result
         
+    except json.JSONDecodeError as e:
+        log_erreur(f"Erreur de décodage JSON dans etat_station.json: {e}")
+        return {}
     except Exception as e:
-        log.error(f"Erreur lors du chargement de etat_station.json: {e}")
+        log_erreur(f"Erreur lors du chargement de etat_station.json: {e}")
         return {}
 
 def sauvegarder_etats_station(etats_station, station_id):
@@ -199,51 +242,110 @@ def sauvegarder_etats_station(etats_station, station_id):
         bool: True si la sauvegarde a réussi, False sinon
     """
     try:
+        # Vérifier que l'ID de station est valide
+        if not station_id:
+            log_erreur("ID de station manquant pour la sauvegarde")
+            return False
+            
+        # Vérifier et corriger la structure des données
+        if not isinstance(etats_station, list):
+            log.warning("Les états de la station ne sont pas une liste, conversion en cours...")
+            etats_station = [etats_station] if etats_station else []
+        
+        # Nettoyer et valider chaque état
+        etats_a_sauvegarder = []
+        for etat in etats_station:
+            if not isinstance(etat, dict):
+                log.warning(f"État invalide ignoré: {etat}")
+                continue
+                
+            # Créer une copie pour éviter de modifier l'original
+            etat_propre = {}
+            
+            # Copier uniquement les champs nécessaires
+            for champ in ['station_id', 'date', 'date_maj', 'etat_ouvrages']:
+                if champ in etat:
+                    etat_propre[champ] = etat[champ]
+            
+            # S'assurer que chaque état a un champ etat_ouvrages
+            if 'etat_ouvrages' not in etat_propre:
+                etat_propre['etat_ouvrages'] = {}
+            
+            # S'assurer que etat_ouvrages est un dictionnaire
+            if not isinstance(etat_propre['etat_ouvrages'], dict):
+                try:
+                    etat_propre['etat_ouvrages'] = dict(etat_propre['etat_ouvrages'])
+                except (TypeError, ValueError):
+                    log.warning("Format d'états d'ouvrages invalide, réinitialisation")
+                    etat_propre['etat_ouvrages'] = {}
+            
+            # S'assurer que l'ID de station est présent
+            if 'station_id' not in etat_propre:
+                etat_propre['station_id'] = station_id
+            
+            # S'assurer que la date de mise à jour existe
+            if 'date_maj' not in etat_propre:
+                etat_propre['date_maj'] = etat_propre.get('date', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            
+            # Supprimer la date simple si nous avons date_maj
+            if 'date' in etat_propre and 'date_maj' in etat_propre:
+                del etat_propre['date']
+            
+            etats_a_sauvegarder.append(etat_propre)
+        
         # Charger les états existants
         etats_data = charger_etats_station()
         if not isinstance(etats_data, dict):
             etats_data = {}
         
-        # Vérifier et corriger la structure des données
-        if not isinstance(etats_station, list):
-            etats_station = [etats_station]
-            
-        # S'assurer que chaque état a un champ etat_ouvrages
-        for etat in etats_station:
-            if 'etat_ouvrages' not in etat:
-                etat['etat_ouvrages'] = {}
-            # S'assurer que etat_ouvrages est un OrderedDict
-            if not isinstance(etat['etat_ouvrages'], OrderedDict):
-                etat['etat_ouvrages'] = OrderedDict(etat['etat_ouvrages'])
-        
         # Mettre à jour les états pour cette station
-        etats_data[station_id] = etats_station
+        etats_data[station_id] = etats_a_sauvegarder
         
-        # Créer un fichier temporaire
-        temp_file = os.path.join('data', f'etat_station_{int(time.time())}.tmp')
+        # Créer le répertoire de données s'il n'existe pas
+        os.makedirs('data', exist_ok=True)
         
-        # Écrire dans le fichier temporaire
-        with open(temp_file, 'w', encoding='utf-8') as f:
-            json.dump(etats_data, f, ensure_ascii=False, indent=2, default=str)
+        # Créer un fichier temporaire avec un nom unique
+        temp_file = os.path.join('data', f'etat_station_{os.getpid()}_{int(time.time())}.tmp')
         
-        # Remplacer l'ancien fichier par le nouveau
-        etat_file = os.path.join('data', 'etat_station.json')
-        backup_file = f"{etat_file}.bak.{int(time.time())}"
-        
-        # Créer une sauvegarde de l'ancien fichier
-        if os.path.exists(etat_file):
-            shutil.copy2(etat_file, backup_file)
-        
-        # Remplacer l'ancien fichier par le nouveau
-        shutil.move(temp_file, etat_file)
-        
-        # Supprimer les anciennes sauvegardes si nécessaire
-        # self.cleanup_old_backups('data', 'etat_station.json.bak.')
-        
-        return True
-        
+        try:
+            # Écrire dans le fichier temporaire
+            with open(temp_file, 'w', encoding='utf-8') as f:
+                json.dump(etats_data, f, ensure_ascii=False, indent=2, default=str)
+            
+            # Vérifier que le fichier temporaire a été correctement écrit
+            if not os.path.exists(temp_file) or os.path.getsize(temp_file) == 0:
+                raise IOError("Le fichier temporaire n'a pas été correctement écrit")
+            
+            # Chemin du fichier de destination
+            etat_file = os.path.join('data', 'etat_station.json')
+            
+            # Créer une sauvegarde de l'ancien fichier s'il existe
+            if os.path.exists(etat_file):
+                backup_file = f"{etat_file}.bak.{int(time.time())}"
+                try:
+                    shutil.copy2(etat_file, backup_file)
+                    log.info(f"Sauvegarde de sécurité créée: {backup_file}")
+                except Exception as e:
+                    log_erreur(f"Impossible de créer la sauvegarde: {e}")
+            
+            # Remplacer l'ancien fichier par le nouveau
+            shutil.move(temp_file, etat_file)
+            log.info(f"Fichier {etat_file} mis à jour avec succès")
+            
+            return True
+            
+        except Exception as e:
+            log_erreur(f"Erreur lors de l'écriture du fichier: {str(e)}")
+            # Essayer de supprimer le fichier temporaire en cas d'erreur
+            try:
+                if os.path.exists(temp_file):
+                    os.remove(temp_file)
+            except Exception as e2:
+                log_erreur(f"Impossible de supprimer le fichier temporaire {temp_file}: {str(e2)}")
+            return False
+            
     except Exception as e:
-        log_erreur(f"Erreur lors de la sauvegarde des états de la station {station_id}: {str(e)}")
+        log_erreur(f"Erreur inattendue lors de la sauvegarde: {str(e)}")
         return False
 
 def load_json(file_path):

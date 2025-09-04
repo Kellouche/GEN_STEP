@@ -1,0 +1,20 @@
+{
+  "b3c5191f-010b-4a4d-95d3-7056400dee9b": [
+    {
+      "station_id": "b3c5191f-010b-4a4d-95d3-7056400dee9b",
+      "date": "2025-09-03",
+      "etat_ouvrages": {
+        "Dégrillage": "en_service",
+        "Dessablage/Dégraissage": "en_service",
+        "Décanteur primaire": "en_service",
+        "Bassins d'aération": "en_service",
+        "Décanteur secondaire": "en_service",
+        "Filtration sur sable": "en_service",
+        "Désinfection UV": "en_service",
+        "Épaississement des boues": "en_service",
+        "Déshydratation mécanique": "en_service",
+        "Lits de séchage": "en_service"
+      }
+    }
+  ]
+}

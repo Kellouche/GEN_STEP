@@ -2,7 +2,7 @@
   "b3c5191f-010b-4a4d-95d3-7056400dee9b": [
     {
       "station_id": "b3c5191f-010b-4a4d-95d3-7056400dee9b",
-      "date_maj": "2025-09-03 13:18:51",
+      "date": "2025-09-03",
       "etat_ouvrages": {
         "Dégrillage": "surcharge_sature",
         "Dessablage/Dégraissage": "en_panne",
@@ -14,7 +14,8 @@
         "Épaississement des boues": "hors_service",
         "Déshydratation mécanique": "inexistant",
         "Lits de séchage": "en_dysfonctionnement"
-      }
+      },
+      "date_maj": "2025-09-03 11:24:02"
     }
   ]
 }

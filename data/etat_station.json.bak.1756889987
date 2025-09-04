@@ -1,0 +1,20 @@
+{
+  "8294b84c-3d0e-4148-a114-14dce477f607": [
+    {
+      "station_id": "8294b84c-3d0e-4148-a114-14dce477f607",
+      "date": "2025-09-03",
+      "etat_ouvrages": {
+        "Dégrillage": "en_service",
+        "Dessablage/Dégraissage": "en_dysfonctionnement",
+        "Décanteur primaire": "inexistant",
+        "Bassins d'aération": "en_service",
+        "Décanteur secondaire": "surcharge_sature",
+        "Filtration sur sable": "inexistant",
+        "Désinfection UV": "inexistant",
+        "Épaississement des boues": "en_service",
+        "Déshydratation mécanique": "arret_volontaire",
+        "Lits de séchage": "inexistant"
+      }
+    }
+  ]
+}

@@ -574,7 +574,7 @@ class DiagrammeFlux:
                             alpha=0.8,
                             boxstyle='round,pad=0.3',
                             edgecolor='#5D2906',
-                            linewidth=0.8
+                            linewidth=0
                         ),
                         color='white',
                         zorder=10
@@ -810,13 +810,11 @@ class DiagrammeFlux:
             
         # Styles pour les différentes destinations
         styles_destination = {
-            'Rejet': {'color': '#1f77b4', 'icon': '🌊', 'style': 'normal'},  # Bleu avec icône vague
-            'Réutilisation': {'color': '#2ca02c', 'icon': '♻️', 'style': 'italic'},  # Vert avec icône recyclage
-            'Irrigation': {'color': '#8c564b', 'icon': '🌱', 'style': 'normal'},  # Marron avec icône plante
+            'Rejet': {'color': '#1f77b4', 'icon': '🌊', 'style': 'normal', 'icon_size': 24},  # Bleu avec icône vague
+            'Milieu naturel': {'color': '#1f77b4', 'icon': '🌳', 'style': 'normal', 'icon_color': '#2ca02c', 'icon_size': 28},  # Bleu avec très grande icône arbre verte
+            'Réutilisation': {'color': '#2ca02c', 'icon': '♻️', 'style': 'italic', 'icon_size': 22},  # Vert avec icône recyclage
+            'Irrigation': {'color': '#8c564b', 'icon': '🌱', 'style': 'normal', 'icon_size': 22},  # Marron avec icône plante
         }
-
-        # Déterminer le style à utiliser
-        style = styles_destination.get(destination, {'color': '#666666', 'icon': '➡️', 'style': 'normal'})
 
         # Afficher l'étiquette 'Eaux épurées'
         ax.text(
@@ -833,25 +831,45 @@ class DiagrammeFlux:
 
         # Afficher la destination avec style
         if destination:
+            # Vérifier si la destination est dans les styles spéciaux
+            dest_speciale = destination in ['Rejet', 'Milieu naturel']
+            
+            # Utiliser le style défini ou un style par défaut
+            style = styles_destination.get(destination, {'color': '#666666', 'icon': '➡️', 'style': 'normal'})
+            
+            # Augmenter la taille pour les destinations spéciales
+            font_size = 14 if dest_speciale else 10
+            padding = 0.8 if dest_speciale else 0.3
+            
+            # Ajuster la position pour le texte plus grand
+            x_position = x_label + 2.5
+            y_position = y_label + (0.2 if dest_speciale else 0)  # Ajuster légèrement vers le haut
+            
+            # Afficher l'icône 
             ax.text(
-                x_label + 2.5,  # Décalé à droite de 'Eaux épurées'
-                y_label,
-                f"{style['icon']} {destination}",
-                ha='left',
+                x_position,  # Centrer horizontalement
+                y_position + 0.3,  # Monter légèrement l'icône pour laisser de la place au texte
+                style['icon'],
+                ha='center',  # Centrer horizontalement
                 va='center',
-                fontsize=10,
-                fontweight='bold',
+                fontsize=style.get('icon_size', 24),  # Taille de police augmentée pour l'icône
+                color=style.get('icon_color', style['color']),
+                zorder=6
+            )
+            
+            # Afficher le texte sous l'icône
+            ax.text(
+                x_position,  # Même position horizontale que l'icône
+                y_position - 0.5,  # Positionner sous l'icône
+                destination,
+                ha='center',  # Centrer le texte sous l'icône
+                va='top',
+                fontsize=9,  # Taille de police légèrement réduite
                 color=style['color'],
                 fontstyle=style['style'],
-                bbox=dict(
-                    facecolor='white',
-                    alpha=0.9,
-                    edgecolor=style['color'],
-                    boxstyle='round,pad=0.3',
-                    linewidth=1
-                ),
+                alpha=0.9,
                 zorder=5
-            )    
+            )
         
         # Ajouter la légende
         self.ajouter_legende(ax)
@@ -1261,7 +1279,7 @@ def generer_diagramme_station():
         # Dessiner le diagramme directement
         diagramme.dessiner_diagramme(ax, diagramme.calculer_positions(
             diagramme.classer_par_filiere(diagramme.parser_ouvrages(ouvrages))
-        ), "Rejet")
+        ), station.get('destination', 'Rejet'))  # Utiliser la destination de la station ou 'Rejet' par défaut
         
         # Ajouter le titre
         fig.suptitle(titre, fontsize=13, fontweight='bold', y=0.99)

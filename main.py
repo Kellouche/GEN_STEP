@@ -50,14 +50,14 @@ def clear_screen():
 def show_menu():
     """Affiche le menu principal avec des icônes et des couleurs"""
     print("\n\033[1;34mMENU PRINCIPAL\033[0m")
-    print("\033[1;32m➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖")
+    print("\033[1;32m➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖")
     print("\033[1;33m1. \033[0m➕ Créer une nouvelle station")
-    print("\033[1;33m2. \033[0m📊 Afficher le schéma d'une station")
+    print("\033[1;33m2. \033[0m📊 Afficher le diagramme de flux d'une station")
     print("\033[1;33m3. \033[0m🔄 Mettre à jour l'état des ouvrages")
     print("\033[1;33m4. \033[0m📋 Lister toutes les stations")
     print("\033[1;33m5. \033[0m🗑️  Supprimer une station")
     print("\033[1;31m6. ❌ Quitter\033[0m")
-    print("\033[1;34m➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖\033[0m")
+    print("\033[1;34m➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖\033[0m")
     
     while True:
         try:
@@ -222,7 +222,7 @@ def update_ouvrage_state_new():
     etats_actuels[station_id] = etats_station
     
     # Sauvegarder les modifications
-    if sauvegarder_etats_station(etats_actuels):
+    if sauvegarder_etats_station(etats_actuels, station_id):
         print("\n\033[1;32m✅ Mise à jour enregistrée avec succès !\033[0m")
     else:
         print("\n\033[1;31m❌ Erreur lors de l'enregistrement de la mise à jour.\033[0m")
@@ -235,6 +235,7 @@ def update_ouvrage_state_edit():
     print("\033[1;34mMODIFICATION D'UNE MISE À JOUR EXISTANTE\033[0m")
     print("-" * 40 + "\n")
 
+    # Sélectionner une station
     station = select_station()
     if not station:
         return
@@ -250,8 +251,8 @@ def update_ouvrage_state_edit():
     etats_station = etats_actuels.get(station_id, [])
 
     # S'assurer que c'est toujours une liste
-    if isinstance(etats_station, dict):
-        etats_station = [etats_station]
+    if not isinstance(etats_station, list):
+        etats_station = [etats_station] if etats_station else []
     
     if not etats_station:
         print("\033[1;33m⚠️  Aucune mise à jour trouvée pour cette station.\033[0m")
@@ -268,7 +269,7 @@ def update_ouvrage_state_edit():
     
     print("Mises à jour disponibles :")
     for i, maj in enumerate(etats_station, 1):
-        date_maj = maj.get('date', 'Date inconnue')
+        date_maj = maj.get('date_maj', 'Date inconnue')
         print(f"{i}. {date_maj}")
     
     # Demander à l'utilisateur de choisir une mise à jour
@@ -285,41 +286,48 @@ def update_ouvrage_state_edit():
         except ValueError:
             print("\033[1;31mVeuillez entrer un numéro valide.\033[0m")
     
-    # Récupérer l'état des ouvrages de la mise à jour sélectionnée
-    etat_ouvrages = etats_station[choix_idx].get('etat_ouvrages', {})
-
-    # Afficher le contenu de etat_ouvrages
-    print("\n\033[1;33m=== ÉTAT ACTUEL DES OUVRAGES ===\033[0m")
-    if not etat_ouvrages:
-        print("Aucun ouvrage trouvé dans cette mise à jour.")
-    else:
-        for ouvrage, etat in etat_ouvrages.items():
-            print(f"- {ouvrage}: {etat}")
-
-    input("\nAppuyez sur Entrée pour continuer...")
+    # Créer une copie de l'état actuel pour modification
+    etat_actuel = etats_station[choix_idx].copy()
     
-    # Modifier les états des ouvrages
-    if not modifier_etats_ouvrages(etat_ouvrages, station.get('nom')):
+    # Afficher le contenu actuel
+    clear_screen()
+    print(f"\033[1;34mMODIFICATION DE LA MISE À JOUR DU {etat_actuel.get('date_maj', 'Date inconnue')}\033[0m")
+    print("-" * 60 + "\n")
+    
+    # Vérifier si nous avons des états d'ouvrages à modifier
+    if not etat_actuel.get('etat_ouvrages'):
+        print("\033[1;33mAucun ouvrage trouvé dans cette mise à jour.\033[0m")
+        input("\nAppuyez sur Entrée pour continuer...")
+        return
+    
+    # Afficher le menu de modification des états
+    if not modifier_etats_ouvrages(etat_actuel['etat_ouvrages'], station.get('nom'), station.get('type_procede')):
+        print("\n\033[1;33mAucune modification apportée.\033[0m")
+        input("\nAppuyez sur Entrée pour continuer...")
         return
     
     # Mettre à jour la date de modification
-    etats_station[choix_idx]['etat_ouvrages'] = etat_ouvrages
-    etats_station[choix_idx]['date_maj'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    etat_actuel['date_maj'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    
+    # Remplacer l'ancien état par le nouveau dans la liste
+    etats_station[choix_idx] = etat_actuel
     
     # Trier à nouveau par date (plus récent en premier)
     etats_station.sort(key=lambda x: x.get('date_maj', ''), reverse=True)
     
     # Sauvegarder les modifications
-    etats_actuels[station_id] = etats_station
-    if sauvegarder_etats_station(etats_actuels):
+    if sauvegarder_etats_station(etats_station, station_id):
         print("\n\033[1;32m✅ Mise à jour modifiée avec succès !\033[0m")
     else:
         print("\n\033[1;31m❌ Erreur lors de la sauvegarde des modifications.\033[0m")
     
-    time.sleep(2)
+    input("\nAppuyez sur Entrée pour continuer...")
 
 def modifier_etats_ouvrages(etat_ouvrages, nom_station, type_procede=None):
     modifications = False
+    
+    # Créer une copie profonde pour éviter de modifier l'original directement
+    etat_ouvrages = etat_ouvrages.copy()
     
     # Créer un nouveau dictionnaire ordonné pour stocker les résultats
     nouveaux_etats = OrderedDict()
@@ -341,13 +349,9 @@ def modifier_etats_ouvrages(etat_ouvrages, nom_station, type_procede=None):
     
     # Afficher et modifier chaque ouvrage dans l'ordre défini
     for i, nom in enumerate(ouvrages_a_afficher, 1):
-        etat = etat_ouvrages[nom]
-        # Ajouter l'état actuel au nouveau dictionnaire ordonné
-        nouveaux_etats[nom] = etat
+        etat = etat_ouvrages.get(nom, 'en_service')
         
-        etat_formate = etat.replace('_', ' ').capitalize()
-        
-        print(f"\n\033[1m--- Ouvrage {i}: {nom} (État actuel: {etat_formate}) ---\033[0m")
+        print(f"\n\033[1m--- Ouvrage {i}: {nom} (État actuel: {etat.replace('_', ' ').title()}) ---\033[0m")
         print("1. ✅  En service (rendement conforme)")
         print("2. ❌  En panne (arrêt total)")
         print("3. ⚠️  En dysfonctionnement (fonctionnement dégradé)")
@@ -357,41 +361,41 @@ def modifier_etats_ouvrages(etat_ouvrages, nom_station, type_procede=None):
         print("7. ⏸️  À l'arrêt volontaire (arrêt choisi)")
         print("8. 📈  Surchargé / Saturé (au-delà capacité)")
         print("9. ✨  Nouvel ouvrage (construit nouvellement)")
-        print("10. ➡️  Passer au suivant")
+        print("0. ➡️  Passer au suivant")
         
         while True:
-            choix = input("\nVotre choix (1-10): ").strip().lower()
+            choix = input("\nVotre choix (0-9): ").strip().lower()
             if not choix:
                 print("Veuillez sélectionner une option valide.")
                 continue
                 
-            if choix == '10' or choix == 'q':
+            if choix == '0' or choix == 'q':
+                # Ajouter l'état actuel sans modification
+                nouveaux_etats[nom] = etat
                 break
                 
-            etats = OrderedDict([
-                ('1', 'en_service'),
-                ('2', 'en_panne'),
-                ('3', 'en_dysfonctionnement'),
-                ('4', 'en_maintenance'),
-                ('5', 'hors_service'),
-                ('6', 'inexistant'),
-                ('7', 'arret_volontaire'),
-                ('8', 'surcharge_sature'),
-                ('9', 'nouvel_ouvrage')
-            ])
+            etats = {
+                '1': 'en_service',
+                '2': 'en_panne',
+                '3': 'en_dysfonctionnement',
+                '4': 'en_maintenance',
+                '5': 'hors_service',
+                '6': 'inexistant',
+                '7': 'arret_volontaire',
+                '8': 'surcharge_sature',
+                '9': 'nouvel_ouvrage'
+            }
             
             if choix in etats:
                 nouvel_etat = etats[choix]
-                # Mettre à jour à la fois le dictionnaire ordonné et le dictionnaire d'origine
                 nouveaux_etats[nom] = nouvel_etat
-                etat_ouvrages[nom] = nouvel_etat
                 print(f"État de {nom} mis à jour: {nouvel_etat.replace('_', ' ').title()}")
                 modifications = True
                 break
             else:
                 print("❌ Option invalide. Veuillez réessayer.")
     
-    # Mettre à jour le dictionnaire d'origine avec l'ordre correct
+    # Mettre à jour le dictionnaire d'origine avec les nouveaux états
     etat_ouvrages.clear()
     etat_ouvrages.update(nouveaux_etats)
     
@@ -558,15 +562,15 @@ def afficher_et_modifier_etats(etat_ouvrages, nom_station, type_procede=None):
         print("7. ⏸️  À l'arrêt volontaire (arrêt choisi)")
         print("8. 📈  Surchargé / Saturé (au-delà capacité)")
         print("9. ✨  Nouvel ouvrage (construit nouvellement)")
-        print("10. ➡️  Passer au suivant")
+        print("0. ➡️  Passer au suivant")
         
         while True:
-            choix = input("\nVotre choix (1-10): ").strip().lower()
+            choix = input("\nVotre choix (0-9): ").strip().lower()
             if not choix:
                 print("Veuillez sélectionner une option valide.")
                 continue
                 
-            if choix == '10' or choix == 'q':
+            if choix == '0' or choix == 'q':
                 break
                 
             etats = {
@@ -702,9 +706,9 @@ def main():
         elif choix == '5':
             delete_station()
         elif choix == '6':
-            print("\n" + "=" * 50)
+            print("\n" + "=" * 68)
             print("\033[1;33m👋  Merci d'avoir utilisé le gestionnaire de stations d'épuration !\033[0m")
-            print("=" * 50 + "\n")
+            print("=" * 68 + "\n")
             break
 
 if __name__ == "__main__":
