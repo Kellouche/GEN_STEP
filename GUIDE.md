@@ -123,4 +123,4 @@ python main.py --batch --config mon_config.json
 ```
 
 ## Support
-Pour toute question, contactez [vos coordonnées].
+Pour toute question, contactez [kelloucheaeh@gmail.com].
