@@ -24,7 +24,6 @@ Application Python pour la génération et la gestion de diagrammes de flux pour
                                    │      Sortie      │
                                    └──────────────────┘
 
-
 ### Composants Principaux
 
 1. **`main.py`**

@@ -3,26 +3,42 @@
 ## Table des Matières
 
 1. [Introduction](#introduction)
-2. [Prise en Main Rapide](#prise-en-main-rapide)
-3. [Fonctionnalités Avancées](#fonctionnalités-avancées)
+2. [Installation](#installation)
+3. [Menu Principal](#menu-principal)
 4. [Gestion des Stations](#gestion-des-stations)
-5. [Génération de Diagrammes](#génération-de-diagrammes)
-6. [Bonnes Pratiques](#bonnes-pratiques)
-7. [Dépannage](#dépannage)
-8. [FAQ](#faq)
+   - [Créer une nouvelle station](#créer-une-nouvelle-station)
+   - [Lister les stations](#lister-les-stations)
+   - [Modifier une station](#modifier-une-station)
+   - [Supprimer une station](#supprimer-une-station)
+5. [Gestion des Ouvrages](#gestion-des-ouvrages)
+   - [Ajouter un ouvrage](#ajouter-un-ouvrage)
+   - [Modifier l'état d'un ouvrage](#modifier-létat-dun-ouvrage)
+6. [Génération de Diagrammes](#génération-de-diagrammes)
+7. [Export des Données](#export-des-données)
+8. [Dépannage](#dépannage)
+9. [FAQ](#faq-foire-aux-questions)
 
 ## Introduction
 
-Bienvenue dans le Générateur de Diagrammes pour Stations d'Épuration. Cet outil puissant vous permet de concevoir, visualiser et documenter des schémas de procédés pour des stations d'épuration de toute taille et complexité.
+Générateur de Diagrammes pour Stations d'Épuration (STEP) est un outil puissant conçu pour les professionnels du traitement des eaux usées. Cette application permet de modéliser, visualiser et documenter facilement les schémas de procédés des stations d'épuration, qu'elles soient de petite ou grande capacité.
 
-### À qui s'adresse ce guide ?
+### À qui s'adresse cet outil ?
 
-- Ingénieurs en assainissement
-- Techniciens de station d'épuration
-- Bureaux d'études
-- Enseignants et étudiants
+- **Ingénieurs en assainissement** : Pour concevoir et documenter les installations
+- **Exploitants de stations d'épuration** : Pour visualiser et suivre l'état des ouvrages
+- **Bureaux d'études** : Pour modéliser des solutions de traitement des eaux usées
+- **Enseignants et étudiants** : Pour l'apprentissage des procédés d'épuration
+- **Services techniques des collectivités** : Pour la gestion du patrimoine d'assainissement
 
-## Prise en Main Rapide
+### Fonctionnalités clés
+
+- Création et gestion de fiches stations complètes
+- Visualisation interactive des schémas de procédés
+- Suivi en temps réel de l'état des équipements
+- Génération de rapports et d'exportations multiples
+- Interface intuitive et personnalisable
+
+## Installation
 
 ### Prérequis
 
@@ -30,11 +46,11 @@ Bienvenue dans le Générateur de Diagrammes pour Stations d'Épuration. Cet out
 - Bibliothèques listées dans `requirements.txt`
 - Environnement graphique (pour la visualisation)
 
-### Installation
+### Procédure d'installation
 
 ```bash
 # Téléchargement
-git clone (https://github.com/Kellouche/GEN_STEP)
+git clone https://github.com/Kellouche/GEN_STEP.git
 cd generateur_STEP
 
 # Configuration de l'environnement
@@ -47,100 +63,184 @@ source venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 ```
 
-### Premier Lancement
+## Menu Principal
 
-1. Démarrer l'application :
+Au lancement, le programme affiche un menu avec les options suivantes :
 
-   ```bash
-   python main.py
-   ```
-
-2. Suivre les instructions à l'écran
-3. Pour obtenir de l'aide à tout moment, appuyez sur 'h' ou '?'
-
-## Fonctionnalités Avancées
-
-### Gestion des Configurations
-
-- Création de modèles personnalisés
-- Import/Export des configurations
-- Historique des modifications
-
-### Personnalisation des Diagrammes
-
-- Choix des couleurs et styles
-- Ajout de légendes personnalisées
-- Contrôle de la densité d'information
+1. ➕ Créer une nouvelle station
+2. 📊 Afficher le diagramme de flux d'une station
+3. 🔄 Mettre à jour l'état des ouvrages
+4. 📋 Lister toutes les stations
+5. 🗑️ Supprimer une station
+6. ❌ Quitter
 
 ## Gestion des Stations
 
-### Création d'une Nouvelle Station
+### Créer une nouvelle station
 
-1. Sélectionnez l'option "Créer une station"
-2. Entrez les informations de base :
+1. Sélectionnez l'option "1. Créer une nouvelle station"
+2. Suivez les invites pour saisir :
    - Nom de la station
+   - Type de procédé
    - Localisation
    - Capacité de traitement
-3. Ajoutez les ouvrages nécessaires
-4. Validez la configuration
+3. Le système génère automatiquement un identifiant unique
+
+### Lister les stations
+
+1. Sélectionnez l'option "4. Lister toutes les stations"
+2. Un tableau s'affiche avec :
+   - ID de la station
+   - Nom
+   - Type de procédé
+   - Date de création
+   - Dernière mise à jour
+
+### Modifier une station
+
+1. Sélectionnez l'option "4. Lister toutes les stations"
+2. Notez l'ID de la station à modifier
+3. Utilisez l'option de modification appropriée
+4. Suivez les invites pour mettre à jour les informations
+
+### Supprimer une station
+
+1. Sélectionnez l'option "5. Supprimer une station"
+2. Entrez l'ID de la station à supprimer
+3. Confirmez la suppression
+
+## Gestion des Ouvrages
+
+### Ajouter un ouvrage
+
+1. Sélectionnez la station cible
+2. Choisissez l'option d'ajout d'ouvrage
+3. Sélectionnez le type d'ouvrage dans la liste
+4. Saisissez les spécifications requises
+
+### Modifier l'état d'un ouvrage
+
+1. Sélectionnez l'option "3. Mettre à jour l'état des ouvrages"
+2. Choisissez la station concernée
+3. Sélectionnez l'ouvrage à modifier
+4. Choisissez le nouvel état parmi :
+   - En service
+   - En panne
+   - En maintenance
+   - Hors service
+   - Nouvel ouvrage
 
 ## Génération de Diagrammes
 
-### Options d'Export
+1. Sélectionnez l'option "2. Afficher le diagramme de flux"
+2. Choisissez la station à visualiser
+3. Le diagramme s'affiche avec les ouvrages et leurs états actuels
+4. Options disponibles :
+   - Zoom avant/arrière
+   - Déplacement
+   - Export en image
 
-- PNG haute résolution
-- PDF vectoriel
-- Fichiers source modifiables
+## Export des Données
 
-### Exemple de Commande d'Export
+### Exporter un diagramme
 
 ```bash
-python main.py --export --station "NomStation" --format png --output mon_diagramme.png
+python main.py --export --station ID_DE_LA_STATION --format png --output mon_diagramme.png
 ```
 
-## Bonnes Pratiques
+### Options d'export disponibles
 
-### Organisation des Données
-
-- Utilisez des noms clairs et cohérents
-- Créez des sauvegardes régulières
-- Documentez les configurations complexes
-
-### Performances
-
-- Pour les grandes stations, utilisez l'export PDF
-- Limitez le nombre d'éléments affichés
-- Utilisez les modèles prédéfinis
+- Format : PNG, PDF, SVG
+- Résolution (pour les images matricielles)
+- Inclure/masquer la légende
 
 ## Dépannage
 
-### Problèmes Courants
+### Problèmes courants
 
-1. **Le diagramme ne s'affiche pas**
-   - Vérifiez les dépendances
-   - Consultez les logs
+- **Les modifications ne sont pas sauvegardées** :
+  - Vérifiez les permissions d'écriture
+  - Assurez-vous d'avoir assez d'espace disque
+  - Consultez les logs d'erreur
 
-2. **Problème d'affichage**
-   - Mettez à jour matplotlib
-   - Vérifiez l'encodage des fichiers
+- **Le diagramme ne s'affiche pas** :
+  - Vérifiez l'installation de matplotlib
+  - Assurez-vous qu'un environnement graphique est disponible
 
-## FAQ
+## FAQ (Foire Aux Questions)
 
-### Comment mettre à jour ?
+### Gestion des Données
+
+#### Quels types de données puis-je importer ?
+
+L'application supporte l'import de données au format JSON. Vous pouvez importer :
+
+- Des configurations de stations existantes
+- Des états d'ouvrages
+- Des modèles de procédés prédéfinis
+
+#### Comment sauvegarder mes données ?
+
+Toutes les modifications sont automatiquement enregistrées dans le fichier `data/etat_station.json`. Pour une sauvegarde sécurisée :
+
+1. Copiez le fichier [etat_station.json](cci:7://file:///d:/IA%20Water%20Data%20Analysis/generateur_STEP/d:/IA%20Water%20Data%20Analysis/generateur_STEP/data/etat_station.json:0:0-0:0)
+2. Stockez-le dans un emplacement sécurisé
+3. Renommez-le avec la date (ex: `etat_station_2025-09-05.json`)
+
+### Gestion des Procédés
+
+#### Quels types de procédés sont supportés ?
+
+L'application prend en charge plusieurs types de procédés d'épuration :
+
+- Boues activées
+- Lagunage
+- Filtres plantés de roseaux
+- MBR (Bioréacteur à membranes)
+- SBR (Réacteur séquentiel)
+
+#### Puis-je créer un procédé personnalisé ?
+
+Oui, vous pouvez créer des procédés personnalisés en :
+
+1. Modifiant le fichier `types.json` dans le dossier `data/`
+2. Suivant la structure existante
+3. En redémarrant l'application
+
+### Gerer des Ouvrages
+
+#### Comment ajouter un nouvel ouvrage ?
+
+1. Allez dans "Gestion des Ouvrages"
+2. Sélectionnez "Ajouter un ouvrage"
+3. Choisissez le type d'ouvrage dans la liste
+4. Remplissez les champs requis
+
+#### Quels états sont disponibles pour un ouvrage ?
+
+- En service
+- En panne
+- En maintenance
+- Hors service
+- Nouvel ouvrage
+
+### Générer de Diagrammes
+
+#### Comment personnaliser l'apparence d'un diagramme ?
+
+Vous pouvez personnaliser :
+
+- Les couleurs des ouvrages
+- La taille du texte
+- L'échelle du diagramme
+- L'affichage des légendes
+
+#### Puis-je exporter un diagramme pour un rapport ?
+
+Oui, utilisez la commande :
 
 ```bash
-git pull origin main
-pip install -r requirements.txt --upgrade
-```
-
-### Puis-je automatiser la génération ?
-
-Oui, utilisez le mode batch :
-
-```bash
-python main.py --batch --config mon_config.json
-```
-
+python main.py --export --station ID_STATION --format pdf --output rapport.pdf
 ## Support
 
-Pour toute question, contactez [kelloucheaeh@gmail.com].
+Pour toute question ou problème, contactez [kelloucheaeh@gmail.com] ou ouvrez une issue sur (https://github.com/Kellouche/GEN_STEP/issues).
