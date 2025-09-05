@@ -1,6 +1,7 @@
 # Guide Complet d'Utilisation - Générateur de Diagrammes STEP
 
 ## Table des Matières
+
 1. [Introduction](#introduction)
 2. [Prise en Main Rapide](#prise-en-main-rapide)
 3. [Fonctionnalités Avancées](#fonctionnalités-avancées)
@@ -11,9 +12,11 @@
 8. [FAQ](#faq)
 
 ## Introduction
+
 Bienvenue dans le Générateur de Diagrammes pour Stations d'Épuration. Cet outil puissant vous permet de concevoir, visualiser et documenter des schémas de procédés pour des stations d'épuration de toute taille et complexité.
 
 ### À qui s'adresse ce guide ?
+
 - Ingénieurs en assainissement
 - Techniciens de station d'épuration
 - Bureaux d'études
@@ -22,14 +25,16 @@ Bienvenue dans le Générateur de Diagrammes pour Stations d'Épuration. Cet out
 ## Prise en Main Rapide
 
 ### Prérequis
+
 - Python 3.8 ou supérieur
 - Bibliothèques listées dans `requirements.txt`
 - Environnement graphique (pour la visualisation)
 
 ### Installation
+
 ```bash
 # Téléchargement
-git clone [URL_DU_REPO]
+git clone (https://github.com/Kellouche/GEN_STEP)
 cd generateur_STEP
 
 # Configuration de l'environnement
@@ -43,21 +48,26 @@ pip install -r requirements.txt
 ```
 
 ### Premier Lancement
+
 1. Démarrer l'application :
+
    ```bash
    python main.py
    ```
+
 2. Suivre les instructions à l'écran
 3. Pour obtenir de l'aide à tout moment, appuyez sur 'h' ou '?'
 
 ## Fonctionnalités Avancées
 
 ### Gestion des Configurations
+
 - Création de modèles personnalisés
 - Import/Export des configurations
 - Historique des modifications
 
 ### Personnalisation des Diagrammes
+
 - Choix des couleurs et styles
 - Ajout de légendes personnalisées
 - Contrôle de la densité d'information
@@ -65,6 +75,7 @@ pip install -r requirements.txt
 ## Gestion des Stations
 
 ### Création d'une Nouvelle Station
+
 1. Sélectionnez l'option "Créer une station"
 2. Entrez les informations de base :
    - Nom de la station
@@ -76,11 +87,13 @@ pip install -r requirements.txt
 ## Génération de Diagrammes
 
 ### Options d'Export
+
 - PNG haute résolution
 - PDF vectoriel
 - Fichiers source modifiables
 
 ### Exemple de Commande d'Export
+
 ```bash
 python main.py --export --station "NomStation" --format png --output mon_diagramme.png
 ```
@@ -88,11 +101,13 @@ python main.py --export --station "NomStation" --format png --output mon_diagram
 ## Bonnes Pratiques
 
 ### Organisation des Données
+
 - Utilisez des noms clairs et cohérents
 - Créez des sauvegardes régulières
 - Documentez les configurations complexes
 
 ### Performances
+
 - Pour les grandes stations, utilisez l'export PDF
 - Limitez le nombre d'éléments affichés
 - Utilisez les modèles prédéfinis
@@ -100,6 +115,7 @@ python main.py --export --station "NomStation" --format png --output mon_diagram
 ## Dépannage
 
 ### Problèmes Courants
+
 1. **Le diagramme ne s'affiche pas**
    - Vérifiez les dépendances
    - Consultez les logs
@@ -111,16 +127,20 @@ python main.py --export --station "NomStation" --format png --output mon_diagram
 ## FAQ
 
 ### Comment mettre à jour ?
+
 ```bash
 git pull origin main
 pip install -r requirements.txt --upgrade
 ```
 
 ### Puis-je automatiser la génération ?
+
 Oui, utilisez le mode batch :
+
 ```bash
 python main.py --batch --config mon_config.json
 ```
 
 ## Support
+
 Pour toute question, contactez [kelloucheaeh@gmail.com].

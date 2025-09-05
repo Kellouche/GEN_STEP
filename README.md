@@ -1,12 +1,13 @@
 # Générateur de Diagrammes pour Stations d'Épuration (STEP)
 
 ## 📋 Description
+
 Application Python pour la génération et la gestion de diagrammes de flux pour les stations d'épuration (STEP).
 
 ## 🔄 Architecture et Flux de Données
 
 ### Vue d'Ensemble du Pipeline
-```
+
 ┌─────────────────┐     ┌──────────────────┐     ┌───────────────────┐
 │   Initialisation├────>│  Menu Principal  ├────>│Gestion des Données│
 └────────┬────────┘     └────────┬─────────┘     └────────┬──────────┘
@@ -22,9 +23,10 @@ Application Python pour la génération et la gestion de diagrammes de flux pour
                                    ┌──────────────────┐
                                    │      Sortie      │
                                    └──────────────────┘
-```
+
 
 ### Composants Principaux
+
 1. **`main.py`**
    - Point d'entrée de l'application
    - Gestion du menu principal
@@ -48,6 +50,7 @@ Application Python pour la génération et la gestion de diagrammes de flux pour
    - Gestion des erreurs
 
 ## 🚀 Fonctionnalités
+
 - Génération de diagrammes de flux interactifs
 - Gestion des différentes configurations de stations d'épuration
 - Suivi de l'état des ouvrages
@@ -55,28 +58,35 @@ Application Python pour la génération et la gestion de diagrammes de flux pour
 - Interface en ligne de commande intuitive
 
 ## 🛠️ Prérequis
+
 - Python 3.8+
 - Bibliothèques Python (voir `requirements.txt`)
 
 ## 🚀 Installation
+
 1. Cloner le dépôt :
+
    ```bash
    git clone [URL_DU_REPO]
    cd generateur_STEP
    ```
+
 2. Installer les dépendances :
+
    ```bash
    pip install -r requirements.txt
    ```
 
 ## 🏃 Utilisation
+
 Exécutez le programme principal :
+
 ```bash
 python main.py
 ```
 
 ## 📂 Structure du Projet
-```
+
 generateur_STEP/
 ├── data/                 # Fichiers de données JSON
 │   ├── etat_station.json
@@ -89,13 +99,15 @@ generateur_STEP/
 ├── main.py               # Point d'entrée principal
 ├── migrate_data.py       # Migration des données
 └── utils.py             # Utilitaires
-```
 
 ## 📝 Guide d'Utilisation
-Voir le fichier [GUIDE.md](GUIDE.md) pour un guide détaillé.
 
-## 📄 Licence
-[À spécifier]
+Voir le fichier GUIDE.md pour un guide détaillé.
+
+## 📜 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 👥 Auteurs
+
 [Dr Kellouche/kelloucheaeh@gmail.com]
