@@ -3,5 +3,4 @@ __pycache__/
 *.bak.*
 *.log
 *.png
-/data/
 /logs/

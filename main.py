@@ -8,15 +8,17 @@ from datetime import datetime
 import logging
 import time
 from collections import OrderedDict
+import unicodedata
 
 # Import des fonctions utilitaires
+from common import clear_screen
 from utils import (
-    clear_screen,
     log_erreur,
     log_info,
     log_avertissement,
     load_json,
-    save_json
+    save_json,
+    get_ouvrages_procede
 )
 
 # Importer les utilitaires
@@ -32,20 +34,13 @@ def save_json(filename, data):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 try:
-    from gen_station import get_types, get_stations, get_etats, get_ouvrages_procede
+    from gen_station import get_types, get_stations, get_etats
     print("Import de gen_station réussi")
 except ImportError as e:
     print("Erreur d'importation de gen_station:", e)
     raise
 
 from create_station import create_station
-
-def clear_screen():
-    """Efface l'écran de la console avec un message de bienvenue"""
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print("\033[1;36m" + "=" * 50)
-    print("   GESTION DES STATIONS D'ÉPURATION")
-    print("=" * 50 + "\033[0m")
 
 def show_menu():
     """Affiche le menu principal avec des icônes et des couleurs"""
@@ -301,10 +296,16 @@ def update_ouvrage_state_edit():
         return
     
     # Afficher le menu de modification des états
-    if not modifier_etats_ouvrages(etat_actuel['etat_ouvrages'], station.get('nom'), station.get('type_procede')):
+    nouveaux_etats = modifier_etats_ouvrages(etat_actuel['etat_ouvrages'], station.get('nom'), station.get('type_procede'))
+    
+    # Vérifier si l'utilisateur a annulé ou s'il n'y a pas de changements
+    if nouveaux_etats == etat_actuel['etat_ouvrages']:
         print("\n\033[1;33mAucune modification apportée.\033[0m")
         input("\nAppuyez sur Entrée pour continuer...")
         return
+    
+    # Mettre à jour les états des ouvrages
+    etat_actuel['etat_ouvrages'] = nouveaux_etats
     
     # Mettre à jour la date de modification
     etat_actuel['date_maj'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -326,30 +327,27 @@ def update_ouvrage_state_edit():
 def modifier_etats_ouvrages(etat_ouvrages, nom_station, type_procede=None):
     modifications = False
     
-    # Créer une copie profonde pour éviter de modifier l'original directement
-    etat_ouvrages = etat_ouvrages.copy()
-    
-    # Créer un nouveau dictionnaire ordonné pour stocker les résultats
-    nouveaux_etats = OrderedDict()
+    # Créer une copie des états actuels
+    nouveaux_etats = etat_ouvrages.copy()
     
     # Obtenir l'ordre des ouvrages selon le type de procédé
     if type_procede:
         ouvrages_ordre = get_ouvrages_procede(type_procede)
         if ouvrages_ordre:
             # Créer une liste ordonnée des ouvrages existants
-            ouvrages_a_afficher = [o for o in ouvrages_ordre if o in etat_ouvrages]
+            ouvrages_a_afficher = [o for o in ouvrages_ordre if o in nouveaux_etats]
             # Ajouter les ouvrages manquants
-            for o in etat_ouvrages:
+            for o in nouveaux_etats:
                 if o not in ouvrages_a_afficher:
                     ouvrages_a_afficher.append(o)
         else:
-            ouvrages_a_afficher = list(etat_ouvrages.keys())
+            ouvrages_a_afficher = list(nouveaux_etats.keys())
     else:
-        ouvrages_a_afficher = list(etat_ouvrages.keys())
+        ouvrages_a_afficher = list(nouveaux_etats.keys())
     
     # Afficher et modifier chaque ouvrage dans l'ordre défini
     for i, nom in enumerate(ouvrages_a_afficher, 1):
-        etat = etat_ouvrages.get(nom, 'en_service')
+        etat = nouveaux_etats.get(nom, 'en_service')
         
         print(f"\n\033[1m--- Ouvrage {i}: {nom} (État actuel: {etat.replace('_', ' ').title()}) ---\033[0m")
         print("1. ✅  En service (rendement conforme)")
@@ -370,8 +368,6 @@ def modifier_etats_ouvrages(etat_ouvrages, nom_station, type_procede=None):
                 continue
                 
             if choix == '0' or choix == 'q':
-                # Ajouter l'état actuel sans modification
-                nouveaux_etats[nom] = etat
                 break
                 
             etats = {
@@ -388,18 +384,16 @@ def modifier_etats_ouvrages(etat_ouvrages, nom_station, type_procede=None):
             
             if choix in etats:
                 nouvel_etat = etats[choix]
-                nouveaux_etats[nom] = nouvel_etat
-                print(f"État de {nom} mis à jour: {nouvel_etat.replace('_', ' ').title()}")
-                modifications = True
+                if nouveaux_etats.get(nom) != nouvel_etat:  # Vérifier si l'état a changé
+                    nouveaux_etats[nom] = nouvel_etat
+                    print(f"État de {nom} mis à jour: {nouvel_etat.replace('_', ' ').title()}")
+                    modifications = True
                 break
             else:
                 print("❌ Option invalide. Veuillez réessayer.")
     
-    # Mettre à jour le dictionnaire d'origine avec les nouveaux états
-    etat_ouvrages.clear()
-    etat_ouvrages.update(nouveaux_etats)
-    
-    return modifications
+    # Toujours retourner les états, même si aucune modification n'a été apportée
+    return nouveaux_etats
 
 def select_etat_interactive():
     """Affiche un menu interactif pour sélectionner un état et le retourne."""
@@ -440,72 +434,76 @@ def get_ouvrages_procede(type_procede):
     5. Traitement des boues (épaississement, déshydratation, séchage)
     """
     try:
+        print(f"\n[DEBUG] Recherche du type de procédé: {type_procede}")
+        
+        # Vérifier si le fichier existe
+        if not os.path.exists('data/types.json'):
+            print("[ERREUR] Le fichier data/types.json n'existe pas")
+            return None
+            
         with open('data/types.json', 'r', encoding='utf-8') as f:
             types_data = json.load(f)
 
-        procede_info = types_data.get(type_procede)
-        if not procede_info:
-            print(f"\033[1;31m❌ Type de procédé '{type_procede}' non trouvé.\033[0m")
-            time.sleep(2)
+        print(f"[DEBUG] Types de procédés disponibles: {list(types_data.keys())}")
+
+        # Normaliser les clés pour être insensibles à la casse et aux accents
+        def normalize(s):
+            return ''.join(c for c in unicodedata.normalize('NFD', str(s).lower())
+                         if not unicodedata.combining(c))
+
+        # Trouver la clé correspondante en ignorant la casse et les accents
+        procede_key = None
+        for key in types_data.keys():
+            if normalize(key) == normalize(type_procede):
+                procede_key = key
+                break
+
+        if not procede_key:
+            print(f"\033[1;31m❌ Type de procédé '{type_procede}' non trouvé dans types.json.\033[0m")
             return None
+
+        procede_info = types_data[procede_key]
+        print(f"[DEBUG] Procédé trouvé: {procede_info.keys()}")
 
         # Créer un dictionnaire ordonné pour maintenir l'ordre des ouvrages
         ouvrages_ordonnes = OrderedDict()
         
+        # Fonction pour ajouter des ouvrages à partir d'une source
+        def ajouter_ouvrages(source, etat_par_defaut='en_service'):
+            if isinstance(source, list):
+                for ouvrage in source:
+                    if isinstance(ouvrage, str) and ouvrage.strip():
+                        ouvrages_ordonnes[ouvrage] = etat_par_defaut
+            elif isinstance(ouvrage, str) and ouvrage.strip():
+                ouvrages_ordonnes[source] = etat_par_defaut
+        
         # 1. Ajouter les ouvrages de prétraitement
         if 'filiere_eau' in procede_info and 'pretraitement' in procede_info['filiere_eau']:
-            pretraitement = procede_info['filiere_eau']['pretraitement']
-            if isinstance(pretraitement, list):
-                for ouvrage in pretraitement:
-                    if isinstance(ouvrage, str) and ouvrage.strip():
-                        ouvrages_ordonnes[ouvrage] = 'en_service'
-            elif isinstance(pretraitement, str) and pretraitement.strip():
-                ouvrages_ordonnes[pretraitement] = 'en_service'
+            ajouter_ouvrages(procede_info['filiere_eau']['pretraitement'])
         
         # 2. Ajouter le traitement primaire
         if 'filiere_eau' in procede_info and 'traitement_primaire' in procede_info['filiere_eau']:
-            primaire = procede_info['filiere_eau']['traitement_primaire']
-            if isinstance(primaire, list):
-                for ouvrage in primaire:
-                    if isinstance(ouvrage, str) and ouvrage.strip():
-                        ouvrages_ordonnes[ouvrage] = 'en_service'
-            elif isinstance(primaire, str) and primaire.strip():
-                ouvrages_ordonnes[primaire] = 'en_service'
+            ajouter_ouvrages(procede_info['filiere_eau']['traitement_primaire'])
         
         # 3. Ajouter le traitement secondaire
         if 'filiere_eau' in procede_info and 'traitement_secondaire' in procede_info['filiere_eau']:
-            secondaire = procede_info['filiere_eau']['traitement_secondaire']
-            if isinstance(secondaire, list):
-                for ouvrage in secondaire:
-                    if isinstance(ouvrage, str) and ouvrage.strip():
-                        ouvrages_ordonnes[ouvrage] = 'en_service'
-            elif isinstance(secondaire, str) and secondaire.strip():
-                ouvrages_ordonnes[secondaire] = 'en_service'
+            ajouter_ouvrages(procede_info['filiere_eau']['traitement_secondaire'])
         
         # 4. Ajouter le traitement tertiaire
-        if 'traitement_tertiaire' in procede_info:
-            tertiaire = procede_info['traitement_tertiaire']
-            if isinstance(tertiaire, list):
-                for ouvrage in tertiaire:
-                    if isinstance(ouvrage, str) and ouvrage.strip():
-                        ouvrages_ordonnes[ouvrage] = 'en_service'
-            elif isinstance(tertiaire, str) and tertiaire.strip():
-                ouvrages_ordonnes[tertiaire] = 'en_service'
+        if 'filiere_eau' in procede_info and 'traitement_tertiaire' in procede_info['filiere_eau']:
+            ajouter_ouvrages(procede_info['filiere_eau']['traitement_tertiaire'])
         
         # 5. Ajouter la filière boue
         if 'filiere_boue' in procede_info:
-            boues = procede_info['filiere_boue']
-            if isinstance(boues, list):
-                for ouvrage in boues:
-                    if isinstance(ouvrage, str) and ouvrage.strip():
-                        ouvrages_ordonnes[ouvrage] = 'en_service'
-            elif isinstance(boues, str) and boues.strip():
-                ouvrages_ordonnes[boues] = 'en_service'
+            ajouter_ouvrages(procede_info['filiere_boue'])
         
+        print(f"[DEBUG] Ouvrages ordonnés: {list(ouvrages_ordonnes.keys())}")
         return ouvrages_ordonnes
         
     except Exception as e:
-        print(f"\033[1;31m❌ Erreur lors de la récupération des ouvrages : {str(e)}\033[0m")
+        print(f"\n[ERREUR] Dans get_ouvrages_procede: {str(e)}")
+        import traceback
+        traceback.print_exc()
         time.sleep(2)
         return None
 
@@ -593,6 +591,7 @@ def afficher_et_modifier_etats(etat_ouvrages, nom_station, type_procede=None):
             else:
                 print("❌ Option invalide. Veuillez réessayer.")
     
+    # Toujours retourner les états, même si aucune modification n'a été apportée
     return etats_mis_a_jour
 
 def list_stations():

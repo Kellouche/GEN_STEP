@@ -1,0 +1,38 @@
+[
+  {
+    "id": "b3c5191f-010b-4a4d-95d3-7056400dee9b",
+    "nom": "Chlef",
+    "localisation": "Algérie, Chlef, Bensouna",
+    "debit_nominal": 36504.0,
+    "type_procede": "boues_activées",
+    "destination": "Milieu naturel",
+    "date_creation": "2025-09-03"
+  },
+  {
+    "id": "5ffeb292-a213-4a36-abb8-730ed1577a61",
+    "nom": "STEP 2",
+    "localisation": "STEP2",
+    "debit_nominal": 2.0,
+    "type_procede": "SBR",
+    "destination": "Irrigation des espaces verts",
+    "date_creation": "2025-09-04"
+  },
+  {
+    "id": "ed494359-b519-4b2f-a1a9-f3ed0a34e70a",
+    "nom": "STEP 3",
+    "localisation": "STEP3",
+    "debit_nominal": 3.0,
+    "type_procede": "biofiltre",
+    "destination": "Industrie",
+    "date_creation": "2025-09-04"
+  },
+  {
+    "id": "0c106a47-81a7-4e0a-af78-6eb207f820c0",
+    "nom": "STEP 4",
+    "localisation": "STEP4",
+    "debit_nominal": 4.0,
+    "type_procede": "MBR",
+    "destination": "Irrigation agricole",
+    "date_creation": "2025-09-04"
+  }
+]

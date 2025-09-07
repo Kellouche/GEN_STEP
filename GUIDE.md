@@ -220,8 +220,12 @@ Oui, vous pouvez créer des procédés personnalisés en :
 
 - En service
 - En panne
+- En dysfonctionnement
 - En maintenance
 - Hors service
+- Inexistant
+- Arrêt volontaire
+- Surchargé / Saturé
 - Nouvel ouvrage
 
 ### Générer de Diagrammes
@@ -230,10 +234,8 @@ Oui, vous pouvez créer des procédés personnalisés en :
 
 Vous pouvez personnaliser :
 
-- Les couleurs des ouvrages
-- La taille du texte
+- Les marges du diagramme
 - L'échelle du diagramme
-- L'affichage des légendes
 
 #### Puis-je exporter un diagramme pour un rapport ?
 

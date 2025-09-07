@@ -6,6 +6,7 @@ from typing import List, Dict, Any, Optional
 from collections import OrderedDict
 import shutil
 import time
+import unicodedata
 
 def configurer_journal():
     """Configure le système de journalisation"""
@@ -268,15 +269,25 @@ def sauvegarder_etats_station(etats_station, station_id):
                     etat_propre[champ] = etat[champ]
             
             # S'assurer que chaque état a un champ etat_ouvrages
-            if 'etat_ouvrages' not in etat_propre:
-                etat_propre['etat_ouvrages'] = {}
-            
-            # S'assurer que etat_ouvrages est un dictionnaire
-            if not isinstance(etat_propre['etat_ouvrages'], dict):
-                try:
-                    etat_propre['etat_ouvrages'] = dict(etat_propre['etat_ouvrages'])
-                except (TypeError, ValueError):
-                    log.warning("Format d'états d'ouvrages invalide, réinitialisation")
+            if 'etat_ouvrages' not in etat_propre or not etat_propre['etat_ouvrages']:
+                # Si etat_ouvrages est vide ou n'existe pas, initialiser avec les ouvrages par défaut
+                station = get_station_by_id(station_id)
+                if station and 'type_procede' in station:
+                    ouvrages_par_defaut = get_ouvrages_procede(station['type_procede'])
+                    if ouvrages_par_defaut:
+                        # Créer une copie profonde des ouvrages par défaut
+                        nouveaux_ouvrages = ouvrages_par_defaut.copy()
+                        
+                        # Conserver les états existants pour les ouvrages déjà présents
+                        if 'etat_ouvrages' in etat and isinstance(etat['etat_ouvrages'], dict):
+                            for ouvrage, etat_ouvrage in etat['etat_ouvrages'].items():
+                                if ouvrage in nouveaux_ouvrages:
+                                    nouveaux_ouvrages[ouvrage] = etat_ouvrage
+                        
+                        etat_propre['etat_ouvrages'] = nouveaux_ouvrages
+                    else:
+                        etat_propre['etat_ouvrages'] = {}
+                else:
                     etat_propre['etat_ouvrages'] = {}
             
             # S'assurer que l'ID de station est présent
@@ -298,8 +309,39 @@ def sauvegarder_etats_station(etats_station, station_id):
         if not isinstance(etats_data, dict):
             etats_data = {}
         
+        # S'assurer que etats_a_sauvegarder est une liste
+        if not isinstance(etats_a_sauvegarder, list):
+            etats_a_sauvegarder = [etats_a_sauvegarder] if etats_a_sauvegarder else []
+        
+        # Vérifier et nettoyer chaque état avant de le sauvegarder
+        etats_propres = []
+        for etat in etats_a_sauvegarder:
+            if not isinstance(etat, dict):
+                continue
+                
+            # Créer une copie propre de l'état
+            etat_propre = {
+                'station_id': str(etat.get('station_id', station_id)),
+                'date_maj': etat.get('date_maj', datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
+                'etat_ouvrages': {}
+            }
+            
+            # Copier les états des ouvrages existants
+            if 'etat_ouvrages' in etat and isinstance(etat['etat_ouvrages'], dict):
+                # Créer une copie profonde du dictionnaire des états
+                for k, v in etat['etat_ouvrages'].items():
+                    if isinstance(k, str) and isinstance(v, str):
+                        etat_propre['etat_ouvrages'][k] = v
+            
+            # S'assurer que tous les champs sont des chaînes de caractères
+            for key, value in etat_propre.items():
+                if isinstance(value, (int, float, bool)):
+                    etat_propre[key] = str(value)
+            
+            etats_propres.append(etat_propre)
+        
         # Mettre à jour les états pour cette station
-        etats_data[station_id] = etats_a_sauvegarder
+        etats_data[str(station_id)] = etats_propres
         
         # Créer le répertoire de données s'il n'existe pas
         os.makedirs('data', exist_ok=True)
@@ -318,15 +360,6 @@ def sauvegarder_etats_station(etats_station, station_id):
             
             # Chemin du fichier de destination
             etat_file = os.path.join('data', 'etat_station.json')
-            
-            # Créer une sauvegarde de l'ancien fichier s'il existe
-            if os.path.exists(etat_file):
-                backup_file = f"{etat_file}.bak.{int(time.time())}"
-                try:
-                    shutil.copy2(etat_file, backup_file)
-                    log.info(f"Sauvegarde de sécurité créée: {backup_file}")
-                except Exception as e:
-                    log_erreur(f"Impossible de créer la sauvegarde: {e}")
             
             # Remplacer l'ancien fichier par le nouveau
             shutil.move(temp_file, etat_file)
@@ -347,6 +380,91 @@ def sauvegarder_etats_station(etats_station, station_id):
     except Exception as e:
         log_erreur(f"Erreur inattendue lors de la sauvegarde: {str(e)}")
         return False
+
+def get_ouvrages_procede(type_procede):
+    """
+    Récupère la liste des ouvrages pour un type de procédé donné en respectant l'ordre logique de traitement.
+    
+    L'ordre logique est le suivant :
+    1. Prétraitement (dégrillage, dessablage/dégraissage)
+    2. Traitement primaire (décanteur primaire)
+    3. Traitement secondaire (bassins d'aération, décanteur secondaire, etc.)
+    4. Traitement tertiaire (filtration, désinfection)
+    5. Traitement des boues (épaississement, déshydratation, séchage)
+    """
+    try:
+        print(f"\n[DEBUG] Recherche du type de procédé: {type_procede}")
+        
+        # Vérifier si le fichier existe
+        if not os.path.exists('data/types.json'):
+            print("[ERREUR] Le fichier data/types.json n'existe pas")
+            return None
+            
+        with open('data/types.json', 'r', encoding='utf-8') as f:
+            types_data = json.load(f)
+            
+        print(f"[DEBUG] Types de procédés disponibles: {list(types_data.keys())}")
+
+        # Normaliser les clés pour être insensibles à la casse et aux accents
+        def normalize(s):
+            return ''.join(c for c in unicodedata.normalize('NFD', str(s).lower())
+                         if not unicodedata.combining(c))
+
+        # Trouver la clé correspondante en ignorant la casse et les accents
+        procede_key = None
+        for key in types_data.keys():
+            if normalize(key) == normalize(type_procede):
+                procede_key = key
+                break
+
+        if not procede_key:
+            print(f"\033[1;31m❌ Type de procédé '{type_procede}' non trouvé dans types.json.\033[0m")
+            return None
+
+        procede_info = types_data[procede_key]
+        print(f"[DEBUG] Procédé trouvé: {procede_info.keys()}")
+
+        # Créer un dictionnaire ordonné pour maintenir l'ordre des ouvrages
+        ouvrages_ordonnes = OrderedDict()
+        
+        # Fonction pour ajouter des ouvrages à partir d'une source
+        def ajouter_ouvrages(source, etat_par_defaut='en_service'):
+            if isinstance(source, list):
+                for ouvrage in source:
+                    if isinstance(ouvrage, str) and ouvrage.strip():
+                        ouvrages_ordonnes[ouvrage] = etat_par_defaut
+            elif isinstance(ouvrage, str) and source.strip():
+                ouvrages_ordonnes[source] = etat_par_defaut
+        
+        # 1. Ajouter les ouvrages de prétraitement
+        if 'filiere_eau' in procede_info and 'pretraitement' in procede_info['filiere_eau']:
+            ajouter_ouvrages(procede_info['filiere_eau']['pretraitement'])
+        
+        # 2. Ajouter le traitement primaire
+        if 'filiere_eau' in procede_info and 'traitement_primaire' in procede_info['filiere_eau']:
+            ajouter_ouvrages(procede_info['filiere_eau']['traitement_primaire'])
+        
+        # 3. Ajouter le traitement secondaire
+        if 'filiere_eau' in procede_info and 'traitement_secondaire' in procede_info['filiere_eau']:
+            ajouter_ouvrages(procede_info['filiere_eau']['traitement_secondaire'])
+        
+        # 4. Ajouter le traitement tertiaire
+        if 'filiere_eau' in procede_info and 'traitement_tertiaire' in procede_info['filiere_eau']:
+            ajouter_ouvrages(procede_info['filiere_eau']['traitement_tertiaire'])
+        
+        # 5. Ajouter la filière boue
+        if 'filiere_boue' in procede_info:
+            ajouter_ouvrages(procede_info['filiere_boue'])
+        
+        print(f"[DEBUG] Ouvrages ordonnés: {list(ouvrages_ordonnes.keys())}")
+        return ouvrages_ordonnes
+        
+    except Exception as e:
+        print(f"\n[ERREUR] Dans get_ouvrages_procede: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        time.sleep(2)
+        return None
 
 def load_json(file_path):
     """
